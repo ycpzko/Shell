@@ -3,10 +3,9 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
 
-
 # shell version
 # ====================
-SHELL_VERSION="2.0.4"
+SHELL_VERSION="2.8.4"
 # ====================
 
 
@@ -14,139 +13,179 @@ SHELL_VERSION="2.0.4"
 CUR_DIR=$( pwd )
 
 
-
 # base url
-if [ -e plugins ] && [ -e prepare ] && [ -e service ] && [ -e templates ] && [ -e tools ] && [ -e utils ]; then
+methods="Online"
+BASE_URL="https://github.com/loyess/Shell/raw/master"
+if [ -e install ] && [ -e prepare ] && [ -e service ] && [ -e templates ] && [ -e utils ] && [ -e webServer ]; then
     methods="Local"
-    BASE_URL="."
-else
-    methods="Online"
-    BASE_URL="https://github.com/loyess/Shell/raw/master"
+    BASE_URL="${CUR_DIR}" 
 fi
 
 
 # bbr
-TEDDYSUN_BBR_SCRIPT_URL="https://git.io/vbUk0"
-CHIAKGE_BBR_SCRIPT_URL="https://git.io/vxJ1I"
+TEDDYSUN_BBR_SCRIPT_URL="https://raw.githubusercontent.com/teddysun/across/master/bbr.sh"
 
 
 # Humanization config PATH
-HUMAN_CONFIG="/etc/shadowsocks-libev/human-config"
+HUMAN_CONFIG="/etc/shadowsocks/humanization.conf"
 
 
-# shadowsocklibev-libev config and init
+# script env dir
+SS_PLUGINS_SCRIPT_ENV_DIR="/root/.ssPluginsScriptEnv"
+SS_PLUGINS_SCRIPT_ENV_VARIABLES_FILE="${SS_PLUGINS_SCRIPT_ENV_DIR}/env.info"
+
+
+# shadowsocks config
+SHADOWSOCKS_CONFIG="/etc/shadowsocks/config.json"
+
+# shadowsocks-libev config and init
 SHADOWSOCKS_LIBEV_INSTALL_PATH="/usr/local/bin"
+SHADOWSOCKS_LIBEV_BIN_PATH="/usr/local/bin/ss-server"
 SHADOWSOCKS_LIBEV_INIT="/etc/init.d/shadowsocks-libev"
-SHADOWSOCKS_LIBEV_CONFIG="/etc/shadowsocks-libev/config.json"
-SHADOWSOCKS_LIBEV_CENTOS="${BASE_URL}/service/shadowsocks-libev_centos.sh"
-SHADOWSOCKS_LIBEV_DEBIAN="${BASE_URL}/service/shadowsocks-libev_debian.sh"
+SHADOWSOCKS_LIBEV_INIT_LOCAL="./service/shadowsocks-libev.sh"
+SHADOWSOCKS_LIBEV_INIT_ONLINE="${BASE_URL}/service/shadowsocks-libev.sh"
+
+# shadowsocks-rust config and init
+SHADOWSOCKS_RUST_INSTALL_PATH="/usr/local/bin"
+SHADOWSOCKS_RUST_BIN_PATH="/usr/local/bin/ssservice"
+SHADOWSOCKS_RUST_INIT="/etc/init.d/shadowsocks-rust"
+SHADOWSOCKS_RUST_INIT_LOCAL="./service/shadowsocks-rust.sh"
+SHADOWSOCKS_RUST_INIT_ONLINE="${BASE_URL}/service/shadowsocks-rust.sh"
+
+# go-shadowsocks2 config and init
+GO_SHADOWSOCKS2_INSTALL_PATH="/usr/local/bin"
+GO_SHADOWSOCKS2_BIN_PATH="/usr/local/bin/go-shadowsocks2"
+GO_SHADOWSOCKS2_INIT="/etc/init.d/go-shadowsocks2"
+GO_SHADOWSOCKS2_INIT_LOCAL="./service/go-shadowsocks2.sh"
+GO_SHADOWSOCKS2_INIT_ONLINE="${BASE_URL}/service/go-shadowsocks2.sh"
+GO_SHADOWSOCKS2_VERSION_FILE="/etc/shadowsocks/go-shadowsocks2.v"
 
 
-# shadowsocklibev-libev dependencies
-LIBSODIUM_VERSION="1.0.18"
-LIBSODIUM_FILE="libsodium-${LIBSODIUM_VERSION}"
-LIBSODIUM_URL="https://github.com/jedisct1/libsodium/releases/download/${LIBSODIUM_VERSION}-RELEASE/libsodium-${LIBSODIUM_VERSION}.tar.gz"
-
-MBEDTLS_VERSION="2.16.3"
-MBEDTLS_FILE="mbedtls-${MBEDTLS_VERSION}"
-MBEDTLS_URL="https://tls.mbed.org/download/mbedtls-${MBEDTLS_VERSION}-gpl.tgz"
-
+# v2ray-plugin
+V2RAY_PLUGIN_INSTALL_PATH="/usr/local/bin"
+V2RAY_PLUGIN_BIN_PATH="/usr/local/bin/v2ray-plugin"
 
 
 # kcptun
-KCPTUN_INSTALL_DIR="/usr/local/kcptun/kcptun-server"
+KCPTUN_INSTALL_PATH="/usr/local/kcptun"
+KCPTUN_BIN_PATH="/usr/local/kcptun/kcptun-server"
 KCPTUN_INIT="/etc/init.d/kcptun"
 KCPTUN_CONFIG="/etc/kcptun/config.json"
-KCPTUN_LOG_DIR="/var/log/kcptun-server.log"
-KCPTUN_CENTOS="${BASE_URL}/service/kcptun_centos.sh"
-KCPTUN_DEBIAN="${BASE_URL}/service/kcptun_debian.sh"
+KCPTUN_INIT_LOCAL="./service/kcptun.sh"
+KCPTUN_INIT_ONLINE="${BASE_URL}/service/kcptun.sh"
+
+
+# simple-obfs
+SIMPLE_OBFS_INSTALL_PATH="/usr/local/bin"
+SIMPLE_OBFS_BIN_PATH="/usr/local/bin/obfs-server"
+
+
+# goquiet
+GOQUIET_INSTALL_PATH="/usr/local/bin"
+GOQUIET_BIN_PATH="/usr/local/bin/gq-server"
 
 
 # cloak
+CLOAK_INSTALL_PATH="/usr/local/bin"
+CLOAK_SERVER_BIN_PATH="/usr/local/bin/ck-server"
+CLOAK_CLIENT_BIN_PATH="/usr/local/bin/ck-client"
 CLOAK_INIT="/etc/init.d/cloak"
-CLOAK_CENTOS="${BASE_URL}/service/cloak_centos.sh"
-CLOAK_DEBIAN="${BASE_URL}/service/cloak_debian.sh"
-CK_DB_PATH="/etc/cloak/db"
+CLOAK_INIT_LOCAL="./service/cloak.sh"
+CLOAK_INIT_ONLINE="${BASE_URL}/service/cloak.sh"
+CK_DB_PATH="/etc/cloak"
 CK_CLIENT_CONFIG="/etc/cloak/ckclient.json"
 CK_SERVER_CONFIG="/etc/cloak/ckserver.json"
 
 
+# mos-tls-tunnel
+MTT_VERSION_FILE="/etc/shadowsocks/mtt.v"
+MTT_INSTALL_PATH="/usr/local/bin"
+MTT_BIN_PATH="/usr/local/bin/mtt-server"
+
+
+# rabbit-tcp
+RABBIT_INSTALL_PATH="/usr/local/bin"
+RABBIT_BIN_PATH="/usr/local/bin/rabbit-tcp"
+RABBIT_INIT="/etc/init.d/rabbit-tcp"
+RABBIT_CONFIG="/etc/rabbit-tcp/config.json"
+RABBIT_VERSION_FILE="/etc/rabbit-tcp/rabbit-tcp.v"
+RABBIT_INIT_LOCAL="./service/rabbit-tcp.sh"
+RABBIT_INIT_ONLINE="${BASE_URL}/service/rabbit-tcp.sh"
+
+
+# simple-tls
+SIMPLE_TLS_INSTALL_PATH="/usr/local/bin"
+SIMPLE_TLS_BIN_PATH="/usr/local/bin/simple-tls"
+SIMPLE_TLS_VERSION_FILE="/etc/shadowsocks/simple-tls.v"
+
+
+# gost-plugin
+GOST_PLUGIN_INSTALL_PATH="/usr/local/bin"
+GOST_PLUGIN_BIN_PATH="/usr/local/bin/gost-plugin"
+GOST_PLUGIN_VERSION_FILE="/etc/shadowsocks/gost-plugin.v"
+
+
+# xray-plugin
+XRAY_PLUGIN_INSTALL_PATH="/usr/local/bin"
+XRAY_PLUGIN_BIN_PATH="/usr/local/bin/xray-plugin"
+XRAY_PLUGIN_VERSION_FILE="/etc/shadowsocks/xray-plugin.v"
+
+
+# qtun
+QTUN_INSTALL_PATH="/usr/local/bin"
+QTUN_BIN_PATH="/usr/local/bin/qtun-server"
+QTUN_VERSION_FILE="/etc/shadowsocks/qtun.v"
+
+
+# gun
+GUN_INSTALL_PATH="/usr/local/bin"
+GUN_BIN_PATH="/usr/local/bin/gun-server"
+GUN_VERSION_FILE="/etc/shadowsocks/gun.v"
+
+
+SS_PLUGINS_NAME=(
+v2ray-plugin
+kcptun
+simple-obfs
+goquiet
+cloak
+mos-tls-tunnel
+rabbit-tcp
+simple-tls
+gost-plugin
+xray-plugin
+qtun
+gun
+)
+
+
+# file exist：install
+WEB_INSTALL_MARK="/root/.WebInstallMark"
+
+
 # caddy
-CADDY_FILE="/usr/local/caddy/caddy"
+CADDY_INSTALL_PATH="/usr/local/caddy"
+CADDY_BIN_PATH="/usr/local/caddy/caddy"
 CADDY_CONF_FILE="/usr/local/caddy/Caddyfile"
-CADDY_INSTALL_SCRIPT_URL="https://git.io/fjuAR"
+CADDY_VERSION_FILE="/usr/local/caddy/caddy.v"
+CADDY_INIT="/etc/init.d/caddy"
+CADDY_INIT_LOCAL="./service/caddy.sh"
+CADDY_INIT_ONLINE="${BASE_URL}/service/caddy.sh"
+CADDY_V2_INIT_LOCAL="./service/caddy2.sh"
+CADDY_V2_INIT_ONLINE="${BASE_URL}/service/caddy2.sh"
 
 
-# shadowsocklibev-libev Ciphers
-SHADOWSOCKS_CIPHERS=(
-rc4-md5
-salsa20
-chacha20
-chacha20-ietf
-aes-256-cfb
-aes-192-cfb
-aes-128-cfb
-aes-256-ctr
-aes-192-ctr
-aes-128-ctr
-bf-cfb
-camellia-128-cfb
-camellia-192-cfb
-camellia-256-cfb
-aes-256-gcm
-aes-192-gcm
-aes-128-gcm
-xchacha20-ietf-poly1305
-chacha20-ietf-poly1305
-)
+# nginx
+NGINX_BIN_PATH="/usr/sbin/nginx"
+NGINX_CONFIG="/etc/nginx/nginx.conf"
 
 
-# kcptun crypt
-KCPTUN_CRYPT=(
-aes
-aes-128
-aes-192
-salsa20
-blowfish
-twofish
-cast5
-3des
-tea
-xtea
-xor
-sm4
-none
-)
-
-
-# v2ray-plugin Transport mode
-V2RAY_PLUGIN_TRANSPORT_MODE=(
-ws+http
-ws+tls+[cdn]
-quic+tls+[cdn]
-ws+tls+web
-ws+tls+web+cdn
-)
-
-
-# kcptun mode(no manual)
-KCPTUN_MODE=(
-fast3
-fast2
-fast
-normal
-)
-
-
-# Simple-obfs Obfuscation wrapper
-OBFUSCATION_WRAPPER=(
-http
-tls
-)
-
-
-# ipv4 and ipv6 Re
+# RE
+EMAIL_RE="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$"
+DOMAIN_RE="^(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$"
 IPV4_RE="^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
+IPV4_PORT_RE="^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\:443$"
+HTTPS_DOMAIN_RE="^(https:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$"
 IPV6_RE="^\s*((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}(:|((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})|(:[0-9A-Fa-f]{1,4})))|(([0-9A-Fa-f]{1,4}:){5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){4}(:[0-9A-Fa-f]{1,4}){0,1}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){3}(:[0-9A-Fa-f]{1,4}){0,2}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){2}(:[0-9A-Fa-f]{1,4}){0,3}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:)(:[0-9A-Fa-f]{1,4}){0,4}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(:(:[0-9A-Fa-f]{1,4}){0,5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})))(%.+)?\s*$"
 
 
@@ -160,42 +199,298 @@ Warning="${Yellow}[警告]${suffix}"
 Separator_1="——————————————————————————————"
 
 
-
-
-
-
-[[ $EUID -ne 0 ]] && echo -e "[${Red}Error${suffix}] This script must be run as root!" && exit 1
+# Root permission
+[ $EUID -ne 0 ] && echo -e "[${Red}Error${suffix}] This script must be run as root!" && exit 1
 
 
 usage() {
-	cat >&1 <<-EOF
+    echo "Usage:"
+    echo "  ./ss-plugins.sh [options...] [args...]"
+    echo
+    echo "Available Options:"
+    echo "  install          安装"
+    echo "  uninstall        卸载"
+    echo "  update           升级"
+    echo "  start            启动"
+    echo "  stop             关闭"
+    echo "  restart          重启"
+    echo "  status           查看状态"
+    echo "  script           升级脚本"
+    echo "  show             可视化配置"
+    echo "  log              查看日志文件"
+    echo "  catcfg           查看原始配置文件"
+    echo "  uid              添加一个新的uid用户(Cloak)"
+    echo "  cert             为.cf .ga .gq .ml .tk申请证书(90天)"
+    echo "  link             用新添加的uid生成一个新的SS://链接(Cloak)"
+    echo "  scan             用ss://链接在当前终端上生成一个可供扫描的二维码"
+    echo "  help             打印帮助信息并退出"
+    exit $1
+}
 
-  请使用: ./ss-plugins.sh [options...] [args...]
-    
-    选项<options>包括:
-        install          安装
-        uninstall        卸载
-        update           升级
-        start            启动
-        stop             关闭
-        restart          重启
-        status           查看状态
-        show             显示可视化配置
-        uid              为cloak添加一个新的uid用户
-        link             用新添加的uid生成一个新的SS://链接
-        scan             用ss://链接在当前终端上生成一个可供扫描的二维码
-        help             打印帮助信息并退出
-    
-  [注意] uid和link选项仅在搭配安装cloak的情况下使用.
-  
-  
-	EOF
+_echo(){
+    case $1 in
+    -u|upon)
+        echo
+        echo -e "${2}"
+        ;;
+    -d|down)
+        echo -e "${2}"
+        echo
+        ;;
+    -r|red)
+        echo
+        echo -e "${Red}${2}${suffix}"
+        echo
+        ;;
+    -g|green)
+        echo
+        echo -e "${Green}${2}${suffix}"
+        echo
+        ;;
+    -i|info)
+        echo -e "${Info} ${2}"
+        ;;
+    -e|error)
+        echo -e "${Error} ${2}"
+        ;;
+    -t|tip)
+        echo
+        echo -e "${Tip} ${2}"
+        echo
+        ;;
+    -w|warning)
+        echo -e "${Warning} ${2}"
+        ;;
+    *)
+        echo
+        echo -e "${1}"
+        echo
+        ;;
+    esac
+}
 
-	exit $1
+_read(){
+    case $1 in
+    -u|upon)
+        echo
+        read -e -p "${2}" inputInfo
+        ;;
+    -d|down)
+        read -e -p "${2}" inputInfo
+        echo
+        ;;
+    *)
+        echo
+        read -e -p "${1}" inputInfo
+        echo
+        ;;
+    esac
+}
+
+status_init(){
+    if [ -e "${SHADOWSOCKS_LIBEV_BIN_PATH}" ]; then
+        ssName="Shadowsocks-libev"
+        ssPath="${SHADOWSOCKS_LIBEV_BIN_PATH}"
+        ssPid=`ps -ef | grep -v grep | grep $SHADOWSOCKS_LIBEV_BIN_PATH | awk '{print $2}'`
+    elif [ -e "${SHADOWSOCKS_RUST_BIN_PATH}" ]; then
+        ssName="Shadowsocks-rust"
+        ssPath="${SHADOWSOCKS_RUST_BIN_PATH}"
+        ssPid=`ps -ef | grep -v grep | grep $SHADOWSOCKS_RUST_BIN_PATH | awk '{print $2}'`
+    elif [ -e "${GO_SHADOWSOCKS2_BIN_PATH}" ]; then
+        ssName="Go-shadowsocks2"
+        ssPath="${GO_SHADOWSOCKS2_BIN_PATH}"
+        ssPid=`ps -ef | grep -v grep | grep $GO_SHADOWSOCKS2_BIN_PATH | awk '{print $2}'`
+    fi
+
+    if [ -e "${V2RAY_PLUGIN_BIN_PATH}" ]; then
+        pluginName="V2ray-plugin"
+        pluginPath="${V2RAY_PLUGIN_BIN_PATH}"
+        pluginPid=`ps -ef | grep -vE 'grep|-plugin-opts' | grep v2ray-plugin | awk '{print $2}'`
+    elif [ -e "${KCPTUN_BIN_PATH}" ]; then
+        pluginName="KcpTun"
+        pluginPath="${KCPTUN_BIN_PATH}"
+        pluginPid=`ps -ef | grep -vE 'grep|-plugin-opts' | grep kcptun-server | awk '{print $2}'`
+    elif [ -e "${SIMPLE_OBFS_BIN_PATH}" ]; then
+        pluginName="Simple-obfs"
+        pluginPath="${SIMPLE_OBFS_BIN_PATH}"
+        pluginPid=`ps -ef | grep -vE 'grep|-plugin-opts' | grep obfs-server | awk '{print $2}'`
+    elif [ -e "${GOQUIET_BIN_PATH}" ]; then
+        pluginName="GoQuiet"
+        pluginPath="${GOQUIET_BIN_PATH}"
+        pluginPid=`ps -ef | grep -vE 'grep|-plugin-opts' | grep gq-server | awk '{print $2}'`
+    elif [ -e "${CLOAK_SERVER_BIN_PATH}" ]; then
+        pluginName="Cloak"
+        pluginPath="${CLOAK_SERVER_BIN_PATH}"
+        pluginPid=`ps -ef | grep -vE 'grep|-plugin-opts' | grep ck-server | awk '{print $2}'`
+    elif [ -e "${MTT_BIN_PATH}" ]; then
+        pluginName="Mos-tls-tunnel"
+        pluginPath="${MTT_BIN_PATH}"
+        pluginPid=`ps -ef | grep -vE 'grep|-plugin-opts' | grep mtt-server | awk '{print $2}'`
+    elif [ -e "${RABBIT_BIN_PATH}" ]; then
+        pluginName="Rabbit-Tcp"
+        pluginPath="${RABBIT_BIN_PATH}"
+        pluginPid=`ps -ef | grep -vE 'grep|-plugin-opts' | grep rabbit-tcp | awk '{print $2}'`
+    elif [ -e "${SIMPLE_TLS_BIN_PATH}" ]; then
+        pluginName="Simple-tls"
+        pluginPath="${SIMPLE_TLS_BIN_PATH}"
+        pluginPid=`ps -ef | grep -vE 'grep|-plugin-opts' | grep simple-tls | awk '{print $2}'`
+    elif [ -e "${GOST_PLUGIN_BIN_PATH}" ]; then
+        pluginName="Gost-plugin"
+        pluginPath="${GOST_PLUGIN_BIN_PATH}"
+        pluginPid=`ps -ef | grep -vE 'grep|-plugin-opts' | grep gost-plugin | awk '{print $2}'`
+    elif [ -e "${XRAY_PLUGIN_BIN_PATH}" ]; then
+        pluginName="Xray-plugin"
+        pluginPath="${XRAY_PLUGIN_BIN_PATH}"
+        pluginPid=`ps -ef | grep -vE 'grep|-plugin-opts' | grep xray-plugin | awk '{print $2}'`
+    elif [ -e "${QTUN_BIN_PATH}" ]; then
+        pluginName="qtun"
+        pluginPath="${QTUN_BIN_PATH}"
+        pluginPid=`ps -ef | grep -vE 'grep|-plugin-opts' | grep qtun-server | awk '{print $2}'`
+    elif [ -e "${GUN_BIN_PATH}" ]; then
+        pluginName="gun"
+        pluginPath="${GUN_BIN_PATH}"
+        pluginPid=`ps -ef | grep -vE 'grep|-plugin-opts' | grep gun-server | awk '{print $2}'`
+    fi
+
+    if [ -e "${CADDY_BIN_PATH}" ] && [ -e "${WEB_INSTALL_MARK}" ]; then
+        webName="Caddy"
+        webPath="${CADDY_BIN_PATH}"
+        webPid=`ps -ef | grep -vE 'grep|-plugin-opts' | grep caddy | awk '{print $2}'`
+    elif [ -e "${NGINX_BIN_PATH}" ] && [ -e "${WEB_INSTALL_MARK}" ]; then
+        webName="Nginx"
+        webPath="${NGINX_BIN_PATH}"
+        webPid=`ps -ef | grep -vE 'grep|-plugin-opts' | grep nginx.conf | awk '{print $2}'`
+    fi
+}
+
+status_menu(){
+    local NoInstall=" 当前状态: ${Red}未安装${suffix}"
+    local InstallStart=" 当前状态: ${Green}已安装${suffix} 并 ${Green}已启动${suffix}"
+    local InstallNoStart=" 当前状态: ${Green}已安装${suffix} 但 ${Red}未启动${suffix}"
+
+    status_init
+
+    if [ -e "${ssPath}" ] && [ -e "${pluginPath}" ] && [ -e "${webPath}" ]; then
+        if [ -n "${ssPid}" ] && [ -n "${pluginPid}" ] && [ -n "${webPid}" ]; then
+            echo -e "${InstallStart}"
+        else
+            echo -e "${InstallNoStart}"
+        fi
+    elif [ -e "${ssPath}" ] && [ -e "${pluginPath}" ]; then
+        if [ -n "${ssPid}" ] && [ -n "${pluginPid}" ]; then
+            echo -e "${InstallStart}"
+        else
+            echo -e "${InstallNoStart}"
+        fi
+    elif [ -e "${ssPath}" ]; then
+        if [ -n "${ssPid}" ]; then
+            echo -e "${InstallStart}"
+        else
+            echo -e "${InstallNoStart}"
+        fi
+    else
+        echo -e "${NoInstall}"
+    fi
+}
+
+check_sys(){
+    local checkType=$1
+    local value=$2
+
+    local release=''
+    local systemPackage=''
+
+    if [ -f /etc/redhat-release ]; then
+        release="centos"
+        systemPackage="yum"
+    elif grep -Eqi "debian|raspbian" /etc/issue; then
+        release="debian"
+        systemPackage="apt"
+    elif grep -Eqi "ubuntu" /etc/issue; then
+        release="ubuntu"
+        systemPackage="apt"
+    elif grep -Eqi "centos|red hat|redhat" /etc/issue; then
+        release="centos"
+        systemPackage="yum"
+    elif grep -Eqi "debian|raspbian" /proc/version; then
+        release="debian"
+        systemPackage="apt"
+    elif grep -Eqi "ubuntu" /proc/version; then
+        release="ubuntu"
+        systemPackage="apt"
+    elif grep -Eqi "centos|red hat|redhat" /proc/version; then
+        release="centos"
+        systemPackage="yum"
+    fi
+
+    if [ "${checkType}" == "sysRelease" ]; then
+        if [ "${value}" == "${release}" ]; then
+            return 0
+        else
+            return 1
+        fi
+    elif [ "${checkType}" == "packageManager" ]; then
+        if [ "${value}" == "${systemPackage}" ]; then
+            return 0
+        else
+            return 1
+        fi
+    fi
+}
+
+check_arch(){
+    case "$(uname -m)" in
+      'amd64' | 'x86_64')
+        ARCH='amd64'
+        ;;
+      'armv8' | 'aarch64')
+        ARCH='arm64'
+        ;;
+      *)
+        echo "[${Red}Error${suffix}] The architecture is not supported."
+        exit 1
+        ;;
+    esac
+}
+
+package_install(){
+    local package_name=$1
+    
+    if check_sys packageManager yum; then
+        yum install -y $1 > /dev/null 2>&1
+        if [ $? -ne 0 ]; then
+            _echo -e "安装 $1 失败."
+            exit 1
+        fi
+    elif check_sys packageManager apt; then
+        apt-get -y update > /dev/null 2>&1
+        apt-get -y install $1 > /dev/null 2>&1
+        if [ $? -ne 0 ]; then
+            _echo -e "安装 $1 失败."
+            exit 1
+        fi
+    fi
+    _echo -i "$1 安装完成."
+}
+
+improt_package(){
+    local package=$1
+    local sh_file=$2
+    
+    if [ ! "$(command -v curl)" ]; then
+        package_install "curl" > /dev/null 2>&1
+    fi
+    
+    if [ "${methods}" = "Online" ]; then
+        source <(curl -sL "${BASE_URL}/${package}/${sh_file}")
+    else
+        cd "${CUR_DIR}"
+        source "${BASE_URL}/${package}/${sh_file}"
+    fi
 }
 
 disable_selinux(){
-    if [ -s /etc/selinux/config ] && grep 'SELINUX=enforcing' /etc/selinux/config; then
+    if [ -s /etc/selinux/config ] && grep -q 'SELINUX=enforcing' /etc/selinux/config; then
         sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
         setenforce 0
     fi
@@ -230,151 +525,120 @@ version_gt(){
     test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" != "$1"
 }
 
-check_pid(){
-    PID=`ps -ef |grep -v grep | grep ss-server |awk '{print $2}'`
-}
-
-check_sys(){
-    local checkType=$1
-    local value=$2
-
-    local release=''
-    local systemPackage=''
-
-    if [[ -f /etc/redhat-release ]]; then
-        release="centos"
-        systemPackage="yum"
-    elif grep -Eqi "debian|raspbian" /etc/issue; then
-        release="debian"
-        systemPackage="apt"
-    elif grep -Eqi "ubuntu" /etc/issue; then
-        release="ubuntu"
-        systemPackage="apt"
-    elif grep -Eqi "centos|red hat|redhat" /etc/issue; then
-        release="centos"
-        systemPackage="yum"
-    elif grep -Eqi "debian|raspbian" /proc/version; then
-        release="debian"
-        systemPackage="apt"
-    elif grep -Eqi "ubuntu" /proc/version; then
-        release="ubuntu"
-        systemPackage="apt"
-    elif grep -Eqi "centos|red hat|redhat" /proc/version; then
-        release="centos"
-        systemPackage="yum"
-    fi
-
-    if [[ "${checkType}" == "sysRelease" ]]; then
-        if [ "${value}" == "${release}" ]; then
-            return 0
-        else
-            return 1
-        fi
-    elif [[ "${checkType}" == "packageManager" ]]; then
-        if [ "${value}" == "${systemPackage}" ]; then
-            return 0
-        else
-            return 1
-        fi
-    fi
-}
-
-check_kernel_version(){
-    local kernel_version=$(uname -r | cut -d- -f1)
-    if version_gt ${kernel_version} 3.7.0; then
+check_latest_version(){
+    local current_v=$1
+    local latest_v=$2
+    if version_gt "${latest_v}" "${current_v}"; then
         return 0
     else
         return 1
     fi
 }
 
-check_kernel_headers(){
-    if check_sys packageManager yum; then
-        if rpm -qa | grep -q headers-$(uname -r); then
-            return 0
-        else
-            return 1
-        fi
-    elif check_sys packageManager apt; then
-        if dpkg -s linux-headers-$(uname -r) > /dev/null 2>&1; then
-            return 0
-        else
-            return 1
-        fi
+check_port_occupy(){
+    local port=$1
+    
+    if [ ! "$(command -v lsof)" ]; then
+        package_install "lsof" > /dev/null 2>&1
     fi
-    return 1
-}
-
-check_ss_libev_version(){
-    if [[ -e '/usr/local/bin/ss-server' ]]; then
-        curr_ver=$(ss-server -v | grep shadowsocks-libev | cut -d\  -f2)
-        latest_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/shadowsocks/shadowsocks-libev/releases | grep -o '"tag_name": ".*"' | head -n 1| sed 's/"//g;s/v//g' | sed 's/tag_name: //g')
-        if version_gt ${latest_ver} ${curr_ver}; then
-            return 0
-        else
-            return 1
-        fi
+    if [ `lsof -i:"${port}" | grep -v google_ | grep -v COMMAND | wc -l` -ne 0 ];then
+        # Occupied
+        return 0
+    else
+        # Unoccupied
+        return 1
     fi
 }
 
-check_script_version(){
-	SHELL_VERSION_NEW=$(wget --no-check-certificate -qO- -t1 -T3 "https://git.io/fjlbl"|grep 'SHELL_VERSION="'|awk -F "=" '{print $NF}'|sed 's/\"//g'|head -1)
-	[[ -z ${SHELL_VERSION_NEW} ]] && echo -e "${Error} 无法链接到 Github !" && exit 0
-	if version_gt ${SHELL_VERSION_NEW} ${SHELL_VERSION}; then
-        echo
-        echo -e "${Green}当前脚本版本为：${SHELL_VERSION} 检测到有新版本可更新...${suffix}"
-        echo -e "按任意键开始…或按Ctrl+C取消"
+kill_process_if_port_occupy(){
+    local port=$1
+
+    while true
+    do
+        if ! check_port_occupy "${port}"; then
+            break
+        fi
+        _echo -g "占用${port}端口的进程信息如下: "
+        lsof -i:"${port}"
+        _read "检测到${port}端口被占用，是否kill此进程(默认: n) [y/n]: "
+        local yn="${inputInfo}"
+        [ -z "${yn}" ] && yn="N"
+        case "${yn:0:1}" in
+            y|Y)
+                lsof -i:"${port}" | grep -v grep | grep "${port}" | awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
+                _echo -t "占用${port}端口的进程已被杀死."
+                break
+                ;;
+            n|N)
+                _echo -e "端口${port}被占用，终止运行."
+                exit 1
+                ;;
+            *)
+                _echo -e "输入有误，请重新输入!"
+                continue
+                ;;
+        esac
+    done
+}
+
+reset_if_ss_port_is_443(){
+    while true
+    do
+        if [ "${shadowsocksport}" -ne 443 ]; then
+            break
+        fi
+        gen_random_prot
+        if check_port_occupy "${ran_prot}"; then
+            continue
+        fi
+        shadowsocksport="${ran_prot}"
+        break
+    done
+}
+
+check_script_update(){
+    local isShow="${1:-"show"}"
+
+    SHELL_VERSION_NEW=$(wget --no-check-certificate -qO- "https://git.io/fjlbl"|grep 'SHELL_VERSION="'|awk -F "=" '{print $NF}'|sed 's/\"//g'|head -1)
+    [ -z "${SHELL_VERSION_NEW}" ] && _echo -e "无法链接到 Github !" && exit 0
+    if version_gt "${SHELL_VERSION_NEW}" "${SHELL_VERSION}"; then
+        _echo -u "${Green}当前脚本版本为：${SHELL_VERSION} 检测到有新版本可更新.${suffix}"
+        _echo -d "按任意键开始…或按Ctrl+C取消"
         char=`get_char`
         wget -N --no-check-certificate -O ss-plugins.sh "https://git.io/fjlbl" && chmod +x ss-plugins.sh
         echo -e "脚本已更新为最新版本[ ${SHELL_VERSION_NEW} ] !(注意：因为更新方式为直接覆盖当前运行的脚本，所以可能下面会提示一些报错，无视即可)" && exit 0
+    else
+        if [ "${isShow}" = "show" ]; then
+            _echo -i "当前脚本版本为: ${SHELL_VERSION} 未检测到更新版本."
+        fi
     fi
 }
 
-choose_script_bbr(){
-    echo
-    echo -e "请选择BBR的安装脚本"
-    echo
-    echo -e "    ${Green}1.${suffix} 秋水逸冰-BBR"
-    echo -e "    ${Green}2.${suffix} BBR|BBR魔改|BBRplus|Lotserver版本"
-    echo && read -e -p "请输入数字 [1-2]：" bbr_menu_num
-    case "${bbr_menu_num}" in
-        1)
-            source <(curl -sL ${TEDDYSUN_BBR_SCRIPT_URL})
-            ;;
-        2)
-            source <(curl -sL ${CHIAKGE_BBR_SCRIPT_URL})
-            ;;
-        *)
-            echo -e "${Error} 请输入正确的数字 [1-2]"
-            ;;
-    esac
+url_encode() {
+    local length="${#1}"
+    for (( i = 0; i < length; i++ )); do
+        local c="${1:i:1}"
+        case $c in
+            [a-zA-Z0-9.~_-])
+                printf "%s" "$c"
+                ;;
+            *)
+                printf "%%%02X" "'$c"
+                ;;
+        esac
+    done
 }
 
 get_ip(){
     local IP=$( ip addr | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | egrep -v "^192\.168|^172\.1[6-9]\.|^172\.2[0-9]\.|^172\.3[0-2]\.|^10\.|^127\.|^255\.|^0\." | head -n 1 )
-    [ -z ${IP} ] && IP=$( wget -qO- -t1 -T2 ipv4.icanhazip.com )
-    [ -z ${IP} ] && IP=$( wget -qO- -t1 -T2 ipinfo.io/ip )
-    echo ${IP}
+    [ -z "${IP}" ] && IP=$( wget -qO- -t1 -T2 ipv4.icanhazip.com )
+    [ -z "${IP}" ] && IP=$( wget -qO- -t1 -T2 ipinfo.io/ip )
+    echo "${IP}"
 }
 
 get_ipv6(){
     local ipv6=$(wget -qO- -t1 -T2 ipv6.icanhazip.com)
-    [ -z ${ipv6} ] && return 1 || return 0
-}
-
-get_ver(){
-    libev_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/shadowsocks/shadowsocks-libev/releases | grep -o '"tag_name": ".*"' | head -n 1| sed 's/"//g;s/v//g' | sed 's/tag_name: //g')
-    [ -z ${libev_ver} ] && echo -e "${Error} 获取 shadowsocks-libev 最新版本失败." && exit 1
-    simple_obfs_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/shadowsocks/simple-obfs/releases | grep -o '"tag_name": ".*"' | head -n 1| sed 's/"//g;s/v//g' | sed 's/tag_name: //g')
-    [ -z ${simple_obfs_ver} ] && echo -e "${Error} 获取 simple-obfs 最新版本失败." && exit 1
-    kcptun_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/xtaci/kcptun/releases | grep -o '"tag_name": ".*"' |head -n 1| sed 's/"//g;s/v//g' | sed 's/tag_name: //g')
-    [ -z ${kcptun_ver} ] && echo -e "${Error} 获取 kcptun 最新版本失败." && exit 1
-    v2ray_plugin_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/shadowsocks/v2ray-plugin/releases | grep -o '"tag_name": ".*"' |head -n 1| sed 's/"//g;s/v//g' | sed 's/tag_name: //g')
-    [ -z ${v2ray_plugin_ver} ] && echo -e "${Error} 获取 v2ray-plugin 最新版本失败." && exit 1
-    goquiet_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/cbeuw/GoQuiet/releases | grep -o '"tag_name": ".*"' |head -n 1| sed 's/"//g;s/v//g' | sed 's/tag_name: //g')
-    [ -z ${goquiet_ver} ] && echo -e "${Error} 获取 goquiet 最新版本失败." && exit 1
-    cloak_ver=$(wget --no-check-certificate -qO- https://api.github.com/repos/cbeuw/Cloak/releases | grep -o '"tag_name": ".*"' |head -n 1| sed 's/"//g;s/v//g' | sed 's/tag_name: //g')
-    [ -z ${cloak_ver} ] && echo -e "${Error} 获取 cloak 最新版本失败." && exit 1
+    [ -z "${ipv6}" ] && return 1 || return 0
 }
 
 get_char(){
@@ -387,21 +651,37 @@ get_char(){
     stty $SAVEDSTTY
 }
 
+get_domain_ip(){
+    local domain=$1
+    local ipv4Re="((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])"
+
+    if [ ! "$(command -v nslookup)" ]; then
+        if check_sys packageManager yum; then
+            package_install "bind-utils" > /dev/null 2>&1
+        elif check_sys packageManager apt; then
+            package_install "dnsutils" > /dev/null 2>&1
+        fi
+    fi
+
+    domain_ip=`nslookup ${domain} | grep -E 'Name:' -A 1 | grep -oE $ipv4Re | tail -1`
+    if [ -n "${domain_ip}" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 get_str_base64_encode(){
     echo -n $1 | base64 -w0
 }
 
-get_str_replace(){
-    echo -n $1 | sed 's/:/%3a/g;s/;/%3b/g;s/=/%3d/g;s/\//%2f/g'
-}
-
 gen_random_prot(){
-    ran_prot=$(shuf -i 9000-19999 -n 1)
+    ran_prot="$(shuf -i 9000-19999 -n 1)"
 }
 
 gen_random_str(){
-    ran_str8=$(head -c 100 /dev/urandom | tr -dc a-z0-9A-Z |head -c 12)
-    ran_str16=$(head -c 100 /dev/urandom | tr -dc a-z0-9A-Z |head -c 16)
+    ran_str5="$(head -c 100 /dev/urandom | tr -dc a-z0-9A-Z | head -c 5)"
+    ran_str12="$(head -c 100 /dev/urandom | tr -dc a-z0-9A-Z | head -c 12)"
 }
 
 gen_credentials(){
@@ -419,18 +699,37 @@ gen_credentials(){
 }
 
 get_version(){
-    if [[ -s /etc/redhat-release ]]; then
+    if [ -s /etc/redhat-release ]; then
         grep -oE  "[0-9.]+" /etc/redhat-release
     else
         grep -oE  "[0-9.]+" /etc/issue
     fi
 }
 
+get_env_variable(){
+    local varName=$1
+    local keyValuePair
+
+    if [ -e "${SS_PLUGINS_SCRIPT_ENV_VARIABLES_FILE}" ]; then
+        keyValuePair=$(grep "${varName}" "${SS_PLUGINS_SCRIPT_ENV_VARIABLES_FILE}")
+        [ -n "${keyValuePair}" ] && export "${keyValuePair}" && return 0
+    else
+        return 1
+    fi
+}
+
+write_env_variable(){
+    local keyValuePairText=$1
+
+    [ ! -e "${SS_PLUGINS_SCRIPT_ENV_DIR}" ] && mkdir -p "${SS_PLUGINS_SCRIPT_ENV_DIR}"
+    echo "${keyValuePairText}" >> "${SS_PLUGINS_SCRIPT_ENV_VARIABLES_FILE}"
+}
+
 centosversion(){
     if check_sys sysRelease centos; then
         local code=$1
         local version="$(get_version)"
-        local main_ver=${version%%.*}
+        local main_ver="${version%%.*}"
         if [ "$main_ver" == "$code" ]; then
             return 0
         else
@@ -441,638 +740,715 @@ centosversion(){
     fi
 }
 
-config_firewall(){
-    if centosversion 6; then
-        /etc/init.d/iptables status > /dev/null 2>&1
-        if [ $? -eq 0 ]; then
-            iptables -L -n | grep -i ${shadowsocksport} > /dev/null 2>&1
-            if [ $? -ne 0 ]; then
-                if [[ ${plugin_num} == "2" ]]; then
-                    iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport ${listen_port} -j ACCEPT
-                    iptables -I INPUT -m state --state NEW -m udp -p udp --dport ${listen_port} -j ACCEPT
-                else
-                    iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport ${shadowsocksport} -j ACCEPT
-                    iptables -I INPUT -m state --state NEW -m udp -p udp --dport ${shadowsocksport} -j ACCEPT
-                fi
-                
-                /etc/init.d/iptables save
-                /etc/init.d/iptables restart
-            else
-                echo -e "${Info} 端口 ${Green}${shadowsocksport}${suffix} 已经启用"
-            fi
-        else
-            echo -e "${Warning} iptables看起来没有运行或没有安装，请在必要时手动启用端口 ${shadowsocksport}"
-        fi
-    elif centosversion 7; then
-        systemctl status firewalld > /dev/null 2>&1
-        if [ $? -eq 0 ]; then
-            if [[ ${plugin_num} == "2" ]]; then
-                firewall-cmd --permanent --zone=public --add-port=${listen_port}/tcp
-                firewall-cmd --permanent --zone=public --add-port=${listen_port}/udp
-            else
-                firewall-cmd --permanent --zone=public --add-port=${shadowsocksport}/tcp
-                firewall-cmd --permanent --zone=public --add-port=${shadowsocksport}/udp
-            fi
-            firewall-cmd --reload
-        else
-            echo -e "${Warning} firewalld看起来没有运行或没有安装，请在必要时手动启用端口 ${shadowsocksport}"
-        fi
-    fi
-}
+judge_is_num(){
+    local aNum=$1
 
-download(){
-    local filename=$(basename $1)
-    if [ -e ${1} ]; then
-        echo "${filename} [已存在.]"
-    else
-        echo "${filename} 当前目录中不存在, 现在开始下载."
-        wget --no-check-certificate -c -t3 -T60 -O ${1} ${2}
-        if [ $? -ne 0 ]; then
-            echo -e "${Error} 下载 ${filename} 失败."
-            exit 1
-        fi
-    fi
-}
-
-download_files(){
-    cd ${CUR_DIR}
-    
-    # Download Shadowsocks-libev
-    get_ver
-    shadowsocks_libev_file="shadowsocks-libev-${libev_ver}"
-    shadowsocks_libev_url="https://github.com/shadowsocks/shadowsocks-libev/releases/download/v${libev_ver}/shadowsocks-libev-${libev_ver}.tar.gz"
-    download "${shadowsocks_libev_file}.tar.gz" "${shadowsocks_libev_url}"
-    if check_sys packageManager yum; then
-        if [[ ${methods} == "Online" ]]; then
-            download "${SHADOWSOCKS_LIBEV_INIT}" "${SHADOWSOCKS_LIBEV_CENTOS}"
-        else
-            cp ./service/shadowsocks-libev_centos.sh "$(dirname ${SHADOWSOCKS_LIBEV_INIT})"
-            mv "$(dirname ${SHADOWSOCKS_LIBEV_INIT})/shadowsocks-libev_centos.sh" "${SHADOWSOCKS_LIBEV_INIT}"    
-        fi        
-    elif check_sys packageManager apt; then
-        if [[ ${methods} == "Online" ]]; then
-            download "${SHADOWSOCKS_LIBEV_INIT}" "${SHADOWSOCKS_LIBEV_DEBIAN}"
-        else
-            cp ./service/shadowsocks-libev_debian.sh "$(dirname ${SHADOWSOCKS_LIBEV_INIT})"
-            mv "$(dirname ${SHADOWSOCKS_LIBEV_INIT})/shadowsocks-libev_debian.sh" "${SHADOWSOCKS_LIBEV_INIT}"
-        fi        
-    fi
-    
-    if [[ "${plugin_num}" == "1" ]]; then        
-        # Download v2ray-plugin
-        v2ray_plugin_file="v2ray-plugin-linux-amd64-v${v2ray_plugin_ver}"
-        v2ray_plugin_url="https://github.com/shadowsocks/v2ray-plugin/releases/download/v${v2ray_plugin_ver}/v2ray-plugin-linux-amd64-v${v2ray_plugin_ver}.tar.gz"
-        download "${v2ray_plugin_file}.tar.gz" "${v2ray_plugin_url}"
-        
-    elif [[ "${plugin_num}" == "2" ]]; then        
-        # Download kcptun
-        kcptun_file="kcptun-linux-amd64-${kcptun_ver}"
-        kcptun_url="https://github.com/xtaci/kcptun/releases/download/v${kcptun_ver}/kcptun-linux-amd64-${kcptun_ver}.tar.gz"
-        download "${kcptun_file}.tar.gz" "${kcptun_url}"
-        
-        if check_sys packageManager yum; then
-            if [[ ${methods} == "Online" ]]; then
-                download "${KCPTUN_INIT}" "${KCPTUN_CENTOS}"
-            else
-                cp ./service/kcptun_centos.sh "$(dirname ${KCPTUN_INIT})"
-                mv "$(dirname ${KCPTUN_INIT})/kcptun_centos.sh" "${KCPTUN_INIT}"
-            fi
-            
-        elif check_sys packageManager apt; then
-            if [[ ${methods} == "Online" ]]; then
-                download "${KCPTUN_INIT}" "${KCPTUN_DEBIAN}"
-            else
-                cp ./service/kcptun_debian.sh "$(dirname ${KCPTUN_INIT})"
-                mv "$(dirname ${KCPTUN_INIT})/kcptun_debian.sh" "${KCPTUN_INIT}"
-            fi
-            
-        fi
-        
-    elif [[ "${plugin_num}" == "4" ]]; then        
-        # Download goquiet
-        goquiet_file="gq-server-linux-amd64-${goquiet_ver}"
-        goquiet_url="https://github.com/cbeuw/GoQuiet/releases/download/v${goquiet_ver}/gq-server-linux-amd64-${goquiet_ver}"
-        download "${goquiet_file}" "${goquiet_url}"
-        
-    elif [[ "${plugin_num}" == "5" ]]; then
-        # Download cloak server
-        cloak_ver="2.1.1"
-        cloak_file="ck-server-linux-amd64-${cloak_ver}"
-        cloak_url="https://github.com/cbeuw/Cloak/releases/download/v${cloak_ver}/ck-server-linux-amd64-${cloak_ver}"
-        download "${cloak_file}" "${cloak_url}"
-        
-        if check_sys packageManager yum; then
-            if [[ ${methods} == "Online" ]]; then
-                download "${CLOAK_INIT}" "${CLOAK_CENTOS}"
-            else
-                cp ./service/cloak_centos.sh "$(dirname ${CLOAK_INIT})"
-                mv "$(dirname ${CLOAK_INIT})/cloak_centos.sh" "${CLOAK_INIT}"
-            fi
-        elif check_sys packageManager apt; then
-            if [[ ${methods} == "Online" ]]; then
-                download "${CLOAK_INIT}" "${CLOAK_DEBIAN}"
-            else
-                cp ./service/cloak_debian.sh "$(dirname ${CLOAK_INIT})"
-                mv "$(dirname ${CLOAK_INIT})/cloak_debian.sh" "${CLOAK_INIT}"
-            fi
-        fi
-
-    fi
-}
-
-error_detect_depends(){
-    local command=$1
-    local depend=`echo "${command}" | awk '{print $4}'`
-    echo -e "${Info} 开始安装依赖包 ${depend}"
-    ${command} > /dev/null 2>&1
+    expr "${aNum}" + 1 &>/dev/null
     if [ $? -ne 0 ]; then
-        echo -e "${Error} 依赖包${Red}${depend}${suffix}安装失败，请检查. "
-        echo "Checking the error message and run the script again."
-        exit 1
-    fi
-}
-
-install_dependencies(){
-    if check_sys packageManager yum; then
-        echo -e "${Info} 检查EPEL存储库."
-        if [ ! -f /etc/yum.repos.d/epel.repo ]; then
-            yum install -y epel-release > /dev/null 2>&1
-        fi
-        [ ! -f /etc/yum.repos.d/epel.repo ] && echo -e "${Error} 安装EPEL存储库失败，请检查它。" && exit 1
-        [ ! "$(command -v yum-config-manager)" ] && yum install -y yum-utils > /dev/null 2>&1
-        [ x"$(yum-config-manager epel | grep -w enabled | awk '{print $3}')" != x"True" ] && yum-config-manager --enable epel > /dev/null 2>&1
-        echo -e "${Info} EPEL存储库检查完成."
-
-        yum_depends=(
-            gettext gcc pcre pcre-devel autoconf libtool automake make asciidoc xmlto c-ares-devel libev-devel zlib-devel openssl-devel git wget qrencode jq
-        )
-        for depend in ${yum_depends[@]}; do
-            error_detect_depends "yum -y install ${depend}"
-        done
-    elif check_sys packageManager apt; then
-        apt_depends=(
-            gettext gcc build-essential autoconf libtool libpcre3-dev asciidoc xmlto libev-dev libc-ares-dev automake libssl-dev git wget qrencode jq
-        )
-
-        apt-get -y update
-        for depend in ${apt_depends[@]}; do
-            error_detect_depends "apt-get -y install ${depend}"
-        done
-    fi
-}
-
-install_libsodium(){    
-    if [ ! -f /usr/lib/libsodium.a ]; then
-        cd ${CUR_DIR}
-        echo -e "${Info} 下载${LIBSODIUM_FILE}..."
-        download "${LIBSODIUM_FILE}.tar.gz" "${LIBSODIUM_URL}"
-        echo -e "${Info} 解压${LIBSODIUM_FILE}..."
-        tar zxf ${LIBSODIUM_FILE}.tar.gz && cd ${LIBSODIUM_FILE}
-        echo -e "${Info} 编译安装${LIBSODIUM_FILE}..."
-        ./configure --prefix=/usr && make && make install
-        if [ $? -ne 0 ]; then
-            echo -e "${Error} ${LIBSODIUM_FILE} 安装失败 !"
-            install_cleanup
-            exit 1
-        fi
-        echo -e "${Info} ${LIBSODIUM_FILE} 安装成功 !"    
+        return 1
     else
-        echo -e "${Info} ${LIBSODIUM_FILE} 已经安装."
+        return 0
     fi
 }
 
-install_mbedtls(){
-    if [ ! -f /usr/lib/libmbedtls.a ]; then
-        cd ${CUR_DIR}
-        echo -e "${Info} 下载${MBEDTLS_FILE}..."
-        download "${MBEDTLS_FILE}-gpl.tgz" "${MBEDTLS_URL}"
-        echo -e "${Info} 解压${MBEDTLS_FILE}..."
-        tar xf ${MBEDTLS_FILE}-gpl.tgz
-        cd ${MBEDTLS_FILE}
-        echo -e "${Info} 编译安装${MBEDTLS_FILE}..."
-        make SHARED=1 CFLAGS=-fPIC
-        make DESTDIR=/usr install
-        if [ $? -ne 0 ]; then
-            echo -e "${Error} ${MBEDTLS_FILE} 安装失败..."
-            install_cleanup
-            exit 1
-        fi
-        echo -e "${Info} ${MBEDTLS_FILE} 安装成功 !"
-    else
-        echo -e "${Info} ${MBEDTLS_FILE} 已经安装."
-    fi
-}
+judge_is_zero_begin_num(){
+    local aNum=$1
 
-autoconf_version(){
-    if [ ! "$(command -v autoconf)" ]; then
-        echo -e "${Info} 开始安装autoconf 软件包."
-        if check_sys packageManager yum; then
-            yum install -y autoconf > /dev/null 2>&1 || echo -e "${Error} 安装autoconf失败."
-        elif check_sys packageManager apt; then
-            apt-get -y update > /dev/null 2>&1
-            apt-get -y install autoconf > /dev/null 2>&1 || echo -e "${Error} 安装autoconf失败."
-        fi
-        echo -e "${Info} autoconf 安装完成."
-    fi
-    local autoconf_ver=$(autoconf --version | grep autoconf | grep -oE "[0-9.]+")
-    if version_ge ${autoconf_ver} 2.67; then
+    if [ "${aNum:0:1}" = 0 ]; then
         return 0
     else
         return 1
     fi
 }
 
+judge_is_equal_num(){
+    local numOne=$1
+    local numTwo=$2
+
+    if [ "${numOne}" -eq "${numTwo}" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+judge_num_in_range(){
+    local aNum=$1
+    local maxNum=$2
+
+    if [ "${aNum}" -lt 1 ] || [ "${aNum}" -gt "${maxNum}" ]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+judge_is_nul_str(){
+    local str=$1
+
+    if [ -z "${str}" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+judge_is_domain(){
+    local domain=$1
+
+    if [ -z "$(echo ${domain} | grep -E ${DOMAIN_RE})" ]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+judge_is_valid_domain(){
+    local domain=$1
+
+    if judge_is_https_begin_site "${domain}"; then
+        domain=$(echo ${domain} | sed 's/https:\/\///g')
+    fi
+    if get_domain_ip "${domain}"; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+judge_is_ip_colon_port_format(){
+    # Match: ip:443 format
+    local ipColonPort=$1
+
+    if [ -z "$(echo ${ipColonPort} | grep -E ${IPV4_PORT_RE})" ]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+judge_is_path(){
+    local path=$1
+
+    if [ -z "$(echo ${path} | grep -E '^\/(\w+\/?)+$')" ]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+judge_is_https_begin_site(){
+    local domainWithProtocolHeader=$1
+
+    if [ -z "$(echo ${domainWithProtocolHeader} | grep -E ${HTTPS_DOMAIN_RE})" ]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+judge_domain_type(){
+    local ip=$1
+
+    if is_cdn_proxied "${ip}"; then
+        echo "CDN"
+    elif is_dns_only "${ip}"; then
+        echo "DNS-Only"
+    else
+        echo "Other"
+    fi
+}
+
+generate_menu(){
+    local aArray=($1)
+    local num=$2
+    local hint
+
+    for ((i=1;i<="${#aArray[@]}";i++ )); do
+        hint="${aArray[$i-1]}"
+        if [ "${i}" -le 9 ]; then
+            echo -e "${Green}  ${i}.${suffix} ${hint}"
+        else
+            echo -e "${Green} ${i}.${suffix} ${hint}"
+        fi
+    done
+    _read "(默认: ${aArray[${num}-1]}):"
+}
+
+generate_menu_logic(){
+    # global var: inputInfo, optionValue
+    local aArray=($1)
+    local tipText=$2
+    local defualtOptNum=$3
+    local arrayLong="${#aArray[@]}"
+
+    while true
+    do
+        _echo "请选择${tipText}："
+        generate_menu "${aArray[*]}" "${defualtOptNum}"
+        [ -z "${inputInfo}" ] && inputInfo="${defualtOptNum}"
+        if ! judge_is_num "${inputInfo}"; then
+            _echo -e "请输入一个数字."
+            continue
+        fi
+        if ! judge_num_in_range "${inputInfo}" "${arrayLong}"; then
+            _echo -e "请输入一个数字在 [1-${arrayLong}] 之间"
+            continue
+        fi
+        optionValue="${aArray[$inputInfo-1]}"
+        _echo -r "  selected = ${optionValue}"
+        break
+    done
+}
+
 config_ss(){
-
-    if check_kernel_version && check_kernel_headers; then
-        fast_open="true"
-    else
-        fast_open="false"
-    fi
-
+    local ipv6First="false"
     local server_value="\"0.0.0.0\""
+
     if get_ipv6; then
-        server_value="[\"[::0]\",\"0.0.0.0\"]"
+        local ssVer="${SS_VERSION}"
+        local pluginNum="${plugin_num}"
+
+        if [ "${ssVer}" = "ss-libev" ]; then
+            server_value="[\"[::0]\",\"0.0.0.0\"]"
+            case "${pluginNum}" in
+                8|9|12)
+                    server_value="\"0.0.0.0\""
+                    ;;
+            esac
+        elif [ "${ssVer}" = "ss-rust" ]; then
+            server_value="\"::\""
+            case "${pluginNum}" in
+                3)
+                    server_value="\"0.0.0.0\""
+                    ;;
+            esac
+        fi
+
+        case "${pluginNum}" in
+            4|6|7)
+                server_value="\"0.0.0.0\""
+                ;;
+        esac
+
+        if [ "${server_value}" != "\"0.0.0.0\"" ]; then
+            ipv6First="true"
+        fi
     fi
 
-    if [ ! -d "$(dirname ${SHADOWSOCKS_LIBEV_CONFIG})" ]; then
-        mkdir -p $(dirname ${SHADOWSOCKS_LIBEV_CONFIG})
+    if [ ! -d "$(dirname ${SHADOWSOCKS_CONFIG})" ]; then
+        mkdir -p $(dirname ${SHADOWSOCKS_CONFIG})
     fi
+    case "${plugin_num}" in
+        1)
+            improt_package "templates/config" "v2ray_plugin_config.sh"
+            config_ss_v2ray_plugin
+            ;;
+        2)
+            improt_package "templates/config" "kcptun_config.sh"
+            config_ss_kcptun
+            ;;
+        3)
+            improt_package "templates/config" "simple_obfs_config.sh"
+            config_ss_simple_obfs
+            ;;
+        4)
+            improt_package "templates/config" "goquiet_config.sh"
+            config_ss_goquiet
+            ;;
+        5)
+            improt_package "templates/config" "cloak_config.sh"
+            config_ss_cloak
+            ;;
+        6)
+            improt_package "templates/config" "mos_tls_tunnel_config.sh"
+            config_ss_mos_tls_tunnel
+            ;;
+        7)
+            improt_package "templates/config" "rabbit_tcp_config.sh"
+            config_ss_rabbit_tcp
+            ;;
+        8)
+            improt_package "templates/config" "simple_tls_config.sh"
+            config_ss_simple_tls
+            ;;
+        9)
+            improt_package "templates/config" "gost_plugin_config.sh"
+            config_ss_gost_plugin
+            ;;
+        10)
+            improt_package "templates/config" "xray_plugin_config.sh"
+            config_ss_xray_plugin
+            ;;
+        11)
+            improt_package "templates/config" "qtun_config.sh"
+            config_ss_qtun
+            ;;
+        12)
+            improt_package "templates/config" "gun_config.sh"
+            config_ss_gun
+            ;;
+        *)
+            ss_server_config
+            ;;
+    esac
+}
 
-    # start wriet config
-    if [[ ${methods} == "Online" ]]; then
-        source <(curl -sL ${BASE_URL}/templates/write_config.sh)
-    else
-        source ${BASE_URL}/templates/write_config.sh
-    fi
-    
-    
-    if [[ ${plugin_num} == "1" ]]; then
-        if [[ ${libev_v2ray} == "1" ]]; then
-           ss_v2ray_ws_http_config
-        elif [[ ${libev_v2ray} == "2" ]]; then    
-           ss_v2ray_ws_tls_cdn_config
-        elif [[ ${libev_v2ray} == "3" ]]; then
-            ss_v2ray_quic_tls_cdn_config
-        elif [[ ${libev_v2ray} == "4" ]]; then
-            ss_v2ray_ws_tls_web_config
-            caddy_config_none_cdn    
-        elif [[ ${libev_v2ray} == "5" ]]; then
-            ss_v2ray_ws_tls_web_cdn_config
-            caddy_config_with_cdn
-        fi
-    elif [[ ${plugin_num} == "2" ]]; then
-        if [ ! -d "$(dirname ${KCPTUN_CONFIG})" ]; then
-            mkdir -p $(dirname ${KCPTUN_CONFIG})
-        fi
-        
-        ss_config_standalone
-        kcptun_config_standalone
-    elif [[ ${plugin_num} == "3" ]]; then
-        if [[ ${libev_obfs} == "1" ]]; then
-           ss_obfs_http_config
-        elif [[ ${libev_obfs} == "2" ]]; then    
-           ss_obfs_tls_config
-        fi
-    elif [[ ${plugin_num} == "4" ]]; then
-        ss_goquiet_config
-    elif [[ ${plugin_num} == "5" ]]; then
-        if [ ! -d "$(dirname ${CK_SERVER_CONFIG})" ]; then
-            mkdir -p $(dirname ${CK_SERVER_CONFIG})
-        fi
-        
-        ss_config_standalone
-        cloak2_server_config
-        cloak2_client_config
-    else
-        ss_config_standalone
-    fi
+config_webserver(){
+    case "${web_flag}" in
+        1)
+            improt_package "webServer" "caddy_config.sh"
+            caddy_config 
+            ;;
+        2)
+            improt_package "webServer" "nginx_config.sh"
+            mirror_domain=$(echo ${mirror_site} | sed 's/https:\/\///g')
+            nginx_config
+            ;;
+    esac
 }
 
 gen_ss_links(){
-    if [[ ${methods} == "Online" ]]; then
-        source <(curl -sL ${BASE_URL}/templates/group_sslink.sh)
-    else
-        source ${BASE_URL}/templates/group_sslink.sh
-    fi
-    
-    if [[ ${plugin_num} == "1" ]]; then
-        if [[ ${libev_v2ray} == "1" ]]; then
-            ss_v2ray_ws_http_link
-        elif [[ ${libev_v2ray} == "2" ]]; then
-            ss_v2ray_ws_tls_cdn_link
-        elif [[ ${libev_v2ray} == "3" ]]; then
-            ss_v2ray_quic_tls_cdn_link
-        elif [[ ${libev_v2ray} == "4" ]]; then
-            ss_v2ray_ws_tls_web_link
-        elif [[ ${libev_v2ray} == "5" ]]; then
-            ss_v2ray_ws_tls_web_cdn_link
-        fi
-    elif [[ ${plugin_num} == "2" ]]; then
-        ss_kcptun_link
-    elif [[ ${plugin_num} == "3" ]]; then
-        if [[ ${libev_obfs} == "1" ]]; then
-           ss_obfs_http_link
-        elif [[ ${libev_obfs} == "2" ]]; then    
-           ss_obfs_tls_link
-        fi
-    elif [[ ${plugin_num} == "4" ]]; then
-        ss_goquiet_link
-    elif [[ ${plugin_num} == "5" ]]; then
-        ss_cloak_link_new
-    else
-        ss_link
-    fi
+    case "${plugin_num}" in
+        1)
+            improt_package "templates/sslinks" "v2ray_plugin_link.sh"
+            gen_ss_v2ray_plugin_link
+            ;;
+        2)
+            improt_package "templates/sslinks" "kcptun_link.sh"
+            gen_ss_kcptun_link
+            ;;
+        3)
+            improt_package "templates/sslinks" "simple_obfs_link.sh"
+            gen_ss_simple_obfs_link
+            ;;
+        4)
+            improt_package "templates/sslinks" "goquiet_link.sh"
+            gen_ss_goquiet_link
+            ;;
+        5)
+            improt_package "templates/sslinks" "cloak_link.sh"
+            gen_ss_cloak_link
+            ;;
+        6)
+            improt_package "templates/sslinks" "mos_tls_tunnel_link.sh"
+            gen_ss_mos_tls_tunnel_link
+            ;;
+        7)
+            improt_package "templates/sslinks" "rabbit_tcp_link.sh"
+            gen_ss_rabbit_tcp_link
+            ;;
+        8)
+            improt_package "templates/sslinks" "simple_tls_link.sh"
+            gen_ss_simple_tls_link
+            ;;
+        9)
+            improt_package "templates/sslinks" "gost_plugin_link.sh"
+            gen_ss_gost_plugin_link
+            ;;
+        10)
+            improt_package "templates/sslinks" "xray_plugin_link.sh"
+            gen_ss_xray_plugin_link
+            ;;
+        11)
+            improt_package "templates/sslinks" "qtun_link.sh"
+            gen_ss_qtun_link
+            ;;
+        12)
+            improt_package "templates/sslinks" "gun_link.sh"
+            gen_ss_gun_link
+            ;;
+        *)
+            clientIpOrDomain="$(get_ip)"
+            ss_client_links
+            ;;
+    esac
 }
 
 install_completed(){
-    ldconfig
-    ${SHADOWSOCKS_LIBEV_INIT} start > /dev/null 2>&1
-    
-    if [[ ${methods} == "Online" ]]; then
-        source <(curl -sL ${BASE_URL}/templates/show_config.sh)
-    else
-        source ${BASE_URL}/templates/show_config.sh
-    fi
-    
-    clear -x
-    if [[ ${plugin_num} == "1" ]]; then
-        if [[ ${libev_v2ray} == "1" ]]; then
-            ss_v2ray_ws_http_show
-        elif [[ ${libev_v2ray} == "2" ]]; then
-            ss_v2ray_ws_tls_cdn_show
-        elif [[ ${libev_v2ray} == "3" ]]; then
-            ss_v2ray_quic_tls_cdn_show
-        elif [[ ${libev_v2ray} == "4" ]]; then
-            # start caddy
-            /etc/init.d/caddy start > /dev/null 2>&1
-            
-            ss_v2ray_ws_tls_web_show
-        elif [[ ${libev_v2ray} == "5" ]]; then
-            # cloudflare email & api key
-            export CLOUDFLARE_EMAIL="${CF_Email}"
-            export CLOUDFLARE_API_KEY="${CF_Key}"
-            
-            # start caddy
-            /etc/init.d/caddy start > /dev/null 2>&1
-            
-            ss_v2ray_ws_tls_web_cdn_show
-        fi
-    elif [[ ${plugin_num} == "2" ]]; then
-        # start kcptun
-        ${KCPTUN_INIT} start  > /dev/null 2>&1
-        
-        ss_kcptun_show
-    elif [[ ${plugin_num} == "3" ]]; then
-        if [[ ${libev_obfs} == "1" ]]; then
-           ss_obfs_http_show
-        elif [[ ${libev_obfs} == "2" ]]; then    
-           ss_obfs_tls_show
-        fi
-    elif [[ ${plugin_num} == "4" ]]; then
-        ss_goquiet_show
-    elif [[ ${plugin_num} == "5" ]]; then
-        # start cloak
-        ${CLOAK_INIT} start  > /dev/null 2>&1
-        
-        ss_cloak_show_new
-    else
-        ss_show
-    fi
+    case "${plugin_num}" in
+        1|3|4|6|7|8|9|10|11|12)
+            ss_plugins_show
+            ;;
+        2)
+            ss_kcptun_show
+            ;;
+        5)
+            ss_cloak_show
+            ;;
+        *)
+            ss_base_show
+            ;;
+    esac
+}
+
+whether_to_install_the_plugin(){
+    while true
+    do
+        _read "要安装一个插件吗？(默认: n) [y/n]:"
+        local yn="${inputInfo}"
+        [ -z "${yn}" ] && yn="N"
+        case "${yn:0:1}" in
+            y|Y)
+                isInstallPlugin=Yes
+                ;;
+            n|N)
+                isInstallPlugin=No
+                ;;
+            *)
+                _echo -e "输入有误，请重新输入."
+                continue
+                ;;
+        esac
+        _echo -r "  selected = ${isInstallPlugin}"
+        break
+    done
+}
+
+choose_ss_plugin(){
+    generate_menu_logic "${SS_PLUGINS_NAME[*]}" "Shadowsocks插件" "1"
+    plugin_num="${inputInfo}" 
+    case "${plugin_num}" in
+        1)
+            improt_package "prepare" "v2ray_plugin_prepare.sh"
+            install_prepare_libev_v2ray
+            ;;
+        2)
+            improt_package "prepare" "kcptun_prepare.sh"
+            install_prepare_libev_kcptun
+            ;;
+        3)
+            improt_package "prepare" "simple_obfs_prepare.sh"
+            install_prepare_libev_obfs
+            ;;
+        4)
+            improt_package "prepare" "goquiet_prepare.sh"
+            install_prepare_libev_goquiet
+            ;;
+        5)
+            improt_package "prepare" "cloak_prepare.sh"
+            install_prepare_libev_cloak
+            ;;
+        6)
+            improt_package "prepare" "mos_tls_tunnel_prepare.sh"
+            install_prepare_libev_mos_tls_tunnel
+            ;;
+        7)
+            improt_package "prepare" "rabbit_tcp_prepare.sh"
+            install_prepare_libev_rabbit_tcp
+            ;;
+        8)
+            improt_package "prepare" "simple_tls_prepare.sh"
+            install_prepare_libev_simple_tls
+            ;;
+        9)
+            improt_package "prepare" "gost_plugin_prepare.sh"
+            install_prepare_libev_gost_plugin
+            ;;
+        10)
+            improt_package "prepare" "xray_plugin_prepare.sh"
+            install_prepare_libev_xray_plugin
+            ;;
+        11)
+            improt_package "prepare" "qtun_prepare.sh"
+            install_prepare_libev_qtun
+            ;;
+        12)
+            improt_package "prepare" "gun_prepare.sh"
+            install_prepare_libev_gun
+            ;;
+    esac
 }
 
 install_prepare(){
-    if [[ ${methods} == "Online" ]]; then
-        source <(curl -sL ${BASE_URL}/prepare/ss_libev_prepare.sh)
-    else
-        source ${BASE_URL}/prepare/ss_libev_prepare.sh
-    fi
-    
+    check_script_update "notShow"
+    improt_package "prepare" "shadowsocks_prepare.sh"
+    choose_ss_install_version
     install_prepare_port
     install_prepare_password
     install_prepare_cipher
-    echo -e "请选择要安装的SS-Plugin
-    
-  ${Green}1.${suffix} v2ray
-  ${Green}2.${suffix} kcptun
-  ${Green}3.${suffix} simple-obfs
-  ${Green}4.${suffix} goquiet (unofficial)
-  ${Green}5.${suffix} cloak (based goquiet)
-  "
-    echo && read -e -p "(默认: 不安装)：" plugin_num
-    [[ -z "${plugin_num}" ]] && plugin_num="" && echo -e "\n${Tip} 当前未选择任何插件，仅安装Shadowsocks-libev."
-    if [[ ${plugin_num} == "1" ]]; then
-        if [[ ${methods} == "Online" ]]; then
-            source <(curl -sL ${BASE_URL}/prepare/v2p_prepare.sh)
-        else
-            source ${BASE_URL}/prepare/v2p_prepare.sh
-        fi
-        
-        install_prepare_libev_v2ray
-    elif [[ ${plugin_num} == "2" ]]; then
-        if [[ ${methods} == "Online" ]]; then
-            source <(curl -sL ${BASE_URL}/prepare/kp_prepare.sh)
-        else
-            source ${BASE_URL}/prepare/kp_prepare.sh
-        fi
-        
-        install_prepare_libev_kcptun
-    elif [[ ${plugin_num} == "3" ]]; then
-        if [[ ${methods} == "Online" ]]; then
-            source <(curl -sL ${BASE_URL}/prepare/obfs_prepare.sh)
-        else
-            source ${BASE_URL}/prepare/obfs_prepare.sh
-        fi
-        
-        install_prepare_libev_obfs
-    elif [[ ${plugin_num} == "4" ]]; then
-        if [[ ${methods} == "Online" ]]; then
-            source <(curl -sL ${BASE_URL}/prepare/gq_prepare.sh)
-        else
-            source ${BASE_URL}/prepare/gq_prepare.sh
-        fi
-        
-        install_prepare_libev_goquiet
-    elif [[ ${plugin_num} == "5" ]]; then
-        if [[ ${methods} == "Online" ]]; then
-            source <(curl -sL ${BASE_URL}/prepare/ck_prepare.sh)
-        else
-            source ${BASE_URL}/prepare/ck_prepare.sh
-        fi
-        
-        install_prepare_libev_cloak
-    elif [[ ${plugin_num} == "" ]]; then
-        :
-    else
-        echo -e "${Error} 请输入正确的数字 [1-5]" && exit 1
+    serverTcpAndUdp="tcp_and_udp"
+    firewallNeedOpenPort="${shadowsocksport}"
+    whether_to_install_the_plugin
+    if [ "${isInstallPlugin}" = "No" ]; then
+        _echo -t "当前未选择任何插件，仅安装${SS_VERSION}."
+    elif [ "${isInstallPlugin}" = "Yes" ]; then
+        choose_ss_plugin
     fi
-    
     echo
     echo "按任意键开始…或按Ctrl+C取消"
     char=`get_char`
-
 }
 
 install_main(){
-    install_libsodium
-    if ! ldconfig -p | grep -wq "/usr/lib"; then
-        echo "/usr/lib" > /etc/ld.so.conf.d/lib.conf
+    if [ "${SS_VERSION}" = "ss-libev" ]; then
+        install_libsodium_logic
+        if ! ldconfig -p | grep -wq "/usr/lib"; then
+            echo "/usr/lib" > /etc/ld.so.conf.d/lib.conf
+        fi
+        ldconfig
+        install_mbedtls_logic
     fi
-    ldconfig
-    install_mbedtls
-    
-    if [[ ${methods} == "Online" ]]; then
-        source <(curl -sL ${BASE_URL}/tools/shadowsocks_libev_install.sh)
-    else
-        cd ${CUR_DIR}
-        source ${BASE_URL}/tools/shadowsocks_libev_install.sh
+    improt_package "install" "shadowsocks_install.sh"
+    case "${SS_VERSION}" in
+        "ss-libev")
+            install_shadowsocks_libev
+        ;;
+        "ss-rust")
+            install_shadowsocks_rust
+        ;;
+        "go-ss2")
+            install_go_shadowsocks2
+        ;;
+    esac
+    case "${plugin_num}" in
+        1)
+            improt_package "install" "v2ray_plugin_install.sh"
+            install_v2ray_plugin
+            serverPluginName="v2ray-plugin"
+            clientPluginName="v2ray-plugin"
+            ;;
+        2)
+            improt_package "install" "kcptun_install.sh"
+            install_kcptun
+            serverPluginName="kcptun-server"
+            clientPluginName="kcptun"
+            ;;
+        3)
+            improt_package "install" "simple_obfs_install.sh"
+            install_simple_obfs
+            serverPluginName="obfs-server"
+            clientPluginName="obfs-local"
+            ;;
+        4)
+            improt_package "install" "goquiet_install.sh"
+            install_goquiet
+            serverPluginName="gq-server"
+            clientPluginName="gq-client"
+            ;;
+        5)
+            improt_package "install" "cloak_install.sh"
+            install_cloak
+            gen_credentials
+            serverPluginName="ck-server"
+            clientPluginName="ck-client"
+            ;;
+        6)
+            improt_package "install" "mos_tls_tunnel_install.sh"
+            install_mos_tls_tunnel
+            serverPluginName="mtt-server"
+            clientPluginName="mostlstunnel"
+            ;;
+        7)
+            improt_package "install" "rabbit_tcp_install.sh"
+            install_rabbit_tcp
+            serverPluginName="rabbit-tcp"
+            clientPluginName="rabbit-plugin"
+            ;;
+        8)
+            improt_package "install" "simple_tls_install.sh"
+            install_simple_tls
+            serverPluginName="simple-tls"
+            clientPluginName="simple-tls"
+            ;;
+        9)
+            improt_package "install" "gost_plugin_install.sh"
+            install_gost_plugin
+            serverPluginName="gost-plugin"
+            clientPluginName="gost-plugin"
+            ;;
+        10)
+            improt_package "install" "xray_plugin_install.sh"
+            install_xray_plugin
+            serverPluginName="xray-plugin"
+            clientPluginName="xray-plugin"
+            ;;
+        11)
+            improt_package "install" "qtun_install.sh"
+            install_qtun
+            serverPluginName="qtun-server"
+            clientPluginName="qtun-client"
+            ;;
+        12)
+            improt_package "install" "gun_install.sh"
+            install_gun
+            serverPluginName="gun-server"
+            clientPluginName="gun-client"
+            ;;
+    esac
+}
+
+install_webserver(){
+    case "${web_flag}" in
+        1)
+            improt_package "webServer" "caddy_install.sh"
+            install_caddy
+            touch "${WEB_INSTALL_MARK}"
+        ;;
+        2)
+            improt_package "webServer" "nginx_install.sh"
+            install_nginx
+            touch "${WEB_INSTALL_MARK}"
+        ;;
+    esac
+}
+
+gen_random_minute(){
+    local _t="$(date -u "+%s")"
+    echo "$(($_t % 60))"
+}
+
+certificate_renew_by_acme(){
+    if ! check_port_occupy "80"; then
+        return
     fi
-    
-    install_shadowsocks_libev
-    if [ "${plugin_num}" == "1" ]; then
-        if [[ ${methods} == "Online" ]]; then
-            source <(curl -sL ${BASE_URL}/plugins/v2ray_plugin_install.sh)
-        else
-            cd ${CUR_DIR}
-            source ${BASE_URL}/plugins/v2ray_plugin_install.sh
-        fi
-        
-        install_v2ray_plugin
-        plugin_client_name="v2ray"
-    elif [ "${plugin_num}" == "2" ]; then
-        if [[ ${methods} == "Online" ]]; then
-            source <(curl -sL ${BASE_URL}/plugins/kcptun_install.sh)
-        else
-            cd ${CUR_DIR}
-            source ${BASE_URL}/plugins/kcptun_install.sh
-        fi
-        
-        install_kcptun
-        plugin_client_name="kcptun"
-    elif [ "${plugin_num}" == "3" ]; then
-        if [[ ${methods} == "Online" ]]; then
-            source <(curl -sL ${BASE_URL}/plugins/simple_obfs_install.sh)
-        else
-            cd ${CUR_DIR}
-            source ${BASE_URL}/plugins/simple_obfs_install.sh
-        fi
-        
-        install_simple_obfs
-        plugin_client_name="obfs-local"
-    elif [ "${plugin_num}" == "4" ]; then
-        if [[ ${methods} == "Online" ]]; then
-            source <(curl -sL ${BASE_URL}/plugins/goquiet_install.sh)
-        else
-            cd ${CUR_DIR}
-            source ${BASE_URL}/plugins/goquiet_install.sh
-        fi
-        
-        install_goquiet
-        plugin_client_name="gq-client"
-    elif [ "${plugin_num}" == "5" ]; then
-        if [[ ${methods} == "Online" ]]; then
-            source <(curl -sL ${BASE_URL}/plugins/cloak_install.sh)
-        else
-            cd ${CUR_DIR}
-            source ${BASE_URL}/plugins/cloak_install.sh
-        fi 
-       
-        install_cloak
-        gen_credentials
-        plugin_client_name="ck-client"
-        
+    do_stop > /dev/null
+    "/root/.acme.sh"/acme.sh --cron --home "/root/.acme.sh" > /dev/null
+    do_start > /dev/null
+}
+
+add_cron_job_for_acme(){
+    random_minute="$(gen_random_minute)"
+    (crontab -l ; echo "${random_minute} 0 * * * \"/root/.acme.sh\"/acme.sh --cron --home \"/root/.acme.sh\" > /dev/null") | sort - | uniq - | crontab -
+}
+
+remove_cron_job_for_acme(){
+    if [ -z "$(crontab -l | grep 'acme.sh --cron')" ]; then
+        return
+    fi
+    crontab -l | sed '/acme.sh --cron/d' | crontab -
+}
+
+add_cron_job(){
+    local random_minute
+
+    if ! check_port_occupy "80"; then
+        return
+    fi
+    remove_cron_job_for_acme
+    random_minute="$(gen_random_minute)"
+    (crontab -l ; echo "${random_minute} 0 * * * \"${CUR_DIR}\"/ss-plugins.sh renew > /dev/null") | sort - | uniq - | crontab -
+}
+
+sync_time(){
+    if [ "${CipherMark}" = "Non-AEAD-2022" ]; then
+        return
+    fi
+    _echo -i "开始同步时间.."
+    if [ "$(command -v ntpdate)" ]; then
+        ntpdate pool.ntp.org
+        [ $? -eq 0 ] && _echo -i "现在时间: $(date -R) 同步完成..."
+    elif [ "$(command -v chronyc)" ]; then
+        chronyc -a makestep
+        [ $? -eq 0 ] && _echo -i "现在时间: $(date -R) 同步完成..."
+    fi
+}
+
+install_status(){
+    status_init
+
+    if [ -e "${ssPath}" ] && [ -e "${pluginPath}" ] && [ -e "${webPath}" ]; then
+        echo -e "\n${Info} ${ssName} ${pluginName} ${webName} 已经安装.\n"
+        exit 1
+    elif [ -e "${ssPath}" ] && [ -e "${pluginPath}" ]; then
+        echo -e "\n${Info} ${ssName} ${pluginName} 已经安装.\n"
+        exit 1
+    elif [ -e "${ssPath}" ]; then
+        echo -e "\n${Info} ${ssName} 已经安装.\n"
+        exit 1
     fi
 }
 
 install_step_all(){
-    [[ -e '/usr/local/bin/ss-server' ]] && echo -e "${Info} Shadowsocks-libev 已经安装..." && exit 1
+    install_status
     disable_selinux
     install_prepare
-    install_dependencies
-    download_files
-    if check_sys packageManager yum; then
-        config_firewall
-    fi
+    TEMP_DIR_PATH=$(mktemp -d)
+    trap "rm -rf $TEMP_DIR_PATH; exit" 2
+    improt_package "utils" "dependencies.sh"
+    install_dependencies_logic
+    improt_package "utils" "downloads.sh"
+    download_ss_file
+    download_plugins_file
+    improt_package "utils" "firewalls.sh"
+    config_firewall_logic
     install_main
+    install_webserver
+    sync_time
+    add_more_entropy
     install_cleanup
+    improt_package "templates" "config.sh"
     config_ss
+    config_webserver
     gen_ss_links
     install_completed
-    
-    if [[ ${methods} == "Online" ]]; then
-        source <(curl -sL ${BASE_URL}/utils/view_config.sh)
-    else
-        source ${BASE_URL}/utils/view_config.sh
-    fi
-    
-    show_config
+    ldconfig
+    do_start
+    add_cron_job
+    do_show
 }
 
 install_cleanup(){
-    cd ${CUR_DIR}
-    # ss-libev
-    rm -rf ${LIBSODIUM_FILE} ${LIBSODIUM_FILE}.tar.gz
-    rm -rf ${MBEDTLS_FILE} ${MBEDTLS_FILE}-gpl.tgz
-    rm -rf ${shadowsocks_libev_file} ${shadowsocks_libev_file}.tar.gz
-    
-    # v2ray-plugin
-    rm -rf v2ray-plugin_linux_amd64 ${v2ray_plugin_file}.tar.gz
-    
-    # kcptun
-    rm -rf client_linux_amd64 server_linux_amd64 ${kcptun_file}.tar.gz
-    
-    # simple-obfs
-    rm -rf simple-obfs
-    
-    # goquiet
-    rm -rf ${goquiet_file}
-    
-    # cloak
-    rm -rf ${cloak_file}
+    cd "${CUR_DIR}"
+    rm -rf  ${TEMP_DIR_PATH}
+}
+
+do_uid(){
+    improt_package "utils" "ck_user_manager.sh"
+    user_manager_by_uid
+}
+
+do_link(){
+    improt_package "utils" "ck_sslink.sh"
+    gen_ssurl_by_uid "$1"
+}
+
+do_scan(){
+    improt_package "utils" "qr_code.sh"
+    gen_qr_code "$1"
+}
+
+do_show(){
+    local mark=$1
+
+    if [ ! -e "${HUMAN_CONFIG}" ]; then
+        echo "The visible config not found."
+        exit 1
+    fi
+    if [ "${mark}" = "cleanScreen" ]; then
+        clear -x
+    fi
+    cat "${HUMAN_CONFIG}"
+}
+
+do_log(){
+    improt_package "utils" "view_log.sh"
+    show_log
+}
+
+do_cert(){
+    improt_package "utils" "gen_certificates.sh"
+    acme_get_certificate_by_manual_force "$1"
+}
+
+do_catcfg(){
+    improt_package "utils" "view_config.sh"
+    view_config_logic
 }
 
 do_start(){
-    if [ "$(command -v ss-server)" ]; then
-        ${SHADOWSOCKS_LIBEV_INIT} start
-        if [ "$(command -v kcptun-server)" ]; then
-            ${KCPTUN_INIT} start
-        elif [[ -e "${CLOAK_INIT}" ]]; then
-            /etc/init.d/cloak start
-        elif [ -e "${CADDY_FILE}" ]; then
-            /etc/init.d/caddy start
-        fi
-    else
-        echo
-        echo -e " ${Red} Shadowsocks-libev 未安装，请尝试安装后，再来执行此操作。${suffix}"
-        echo
-    fi  
+    status_init
+    if [ -z "${ssPath}" ]; then
+        _echo -r "Shadowsocks未安装，请尝试安装后，再来执行此操作."
+        exit 1
+    fi
+    improt_package "utils" "start.sh"
+    start_services
 }
 
 do_stop(){
-    # kill v2ray-plugin 、obfs-server、gq-server ck-server
-    ps -ef |grep -v grep | grep ss-server |awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
-    ps -ef |grep -v grep | grep v2ray-plugin |awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
-    ps -ef |grep -v grep | grep kcptun-server |awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
-    ps -ef |grep -v grep | grep obfs-server |awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
-    ps -ef |grep -v grep | grep gq-server |awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
-    ps -ef |grep -v grep | grep ck-server |awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
-    ps -ef |grep -v grep | grep caddy |awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
-
-    echo -e "Stopping Shadowsocks-libev success"
-    
-    if [ "$(command -v v2ray-plugin)" ]; then
-        echo -e "Stopping v2ray-plugin success"
-    elif [ "$(command -v kcptun-server)" ]; then
-        echo -e "Stopping kcptun-server success"
-    elif [ "$(command -v obfs-server)" ]; then
-        echo -e "Stopping obfs-server success"
-    elif [ "$(command -v gq-server)" ]; then
-        echo -e "Stopping gq-server success"
-    elif [ "$(command -v ck-server)" ]; then
-        echo -e "Stopping ck-server success"
-    elif [ "$(command -v caddy)" ]; then
-        echo -e "Stopping caddy success"
-    fi
+    improt_package "utils" "stop.sh"
+    stop_services
 }
 
 do_restart(){
@@ -1080,171 +1456,72 @@ do_restart(){
     do_start
 }
 
-# install status
 do_status(){
-    if [[ -e '/usr/local/bin/ss-server' ]]; then
-        check_pid
-        if [[ ! -z "${PID}" ]]; then
-            echo -e " 当前状态: ${Green}已安装${suffix} 并 ${Green}已启动${suffix}"
-        else
-            echo -e " 当前状态: ${Green}已安装${suffix} 但 ${Red}未启动${suffix}"
-        fi
-    else
-        echo -e " 当前状态: ${Red}未安装${suffix}"
-    fi
+    improt_package "utils" "status.sh"
+    other_status
 }
 
 do_update(){
-    if [[ -e '/usr/local/bin/ss-server' ]]; then
-        if check_ss_libev_version; then
-            do_stop > /dev/null 2>&1
-            download_files
-            
-            if [[ ${methods} == "Online" ]]; then
-                source <(curl -sL ${BASE_URL}/tools/shadowsocks_libev_install.sh)
-            else
-                source ${BASE_URL}/tools/shadowsocks_libev_install.sh
-            fi
-            
-            install_shadowsocks_libev
-            install_cleanup
-            do_restart > /dev/null 2>&1
-            echo
-            echo -e "${Point} shadowsocklibev-libev升级为 ${latest_ver}最新版本，并已重启运行..."
-            echo
-        else
-            echo
-            echo -e "${Point} shadowsocklibev-libev当前已是最新版本 ${curr_ver}，不需要更新..."
-            echo
-            exit 1
-        fi
-    fi
-    
+    cd "${CUR_DIR}"
+    improt_package "utils" "update.sh"
+    update_logic
 }
 
 do_uninstall(){
-    printf "你确定要卸载Shadowsocks-libev吗? [y/n]\n"
-    read -e -p "(默认: n):" answer
-    [ -z ${answer} ] && answer="n"
-    if [ "${answer}" == "y" ] || [ "${answer}" == "Y" ]; then
-        # check Shadowsocks-libev status
-        ${SHADOWSOCKS_LIBEV_INIT} status > /dev/null 2>&1
-        if [ $? -eq 0 ]; then
-            ${SHADOWSOCKS_LIBEV_INIT} stop > /dev/null 2>&1
-        fi
-        local ss_service_name=$(basename ${SHADOWSOCKS_LIBEV_INIT})
-        if check_sys packageManager yum; then
-            chkconfig --del ${ss_service_name}
-        elif check_sys packageManager apt; then
-            update-rc.d -f ${ss_service_name} remove
-        fi
-        
-        # check kcptun status
-        ${KCPTUN_INIT} status > /dev/null 2>&1
-        if [ $? -eq 0 ]; then
-            ${KCPTUN_INIT} stop > /dev/null 2>&1
-        fi
-        local kcp_service_name=$(basename ${KCPTUN_INIT})
-        if check_sys packageManager yum; then
-            chkconfig --del ${kcp_service_name}
-        elif check_sys packageManager apt; then
-            update-rc.d -f ${kcp_service_name} remove
-        fi
-        
-        # check cloak status
-        ${CLOAK_INIT} status > /dev/null 2>&1
-        if [ $? -eq 0 ]; then
-            ${CLOAK_INIT} stop > /dev/null 2>&1
-        fi
-        local ck_service_name=$(basename ${CLOAK_INIT})
-        if check_sys packageManager yum; then
-            chkconfig --del ${ck_service_name}
-        elif check_sys packageManager apt; then
-            update-rc.d -f ${ck_service_name} remove
-        fi
-        
-        # kill v2ray-plugin 、obfs-server、gq-server ck-server
-        ps -ef |grep -v grep | grep v2ray-plugin |awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
-        ps -ef |grep -v grep | grep obfs-server |awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
-        ps -ef |grep -v grep | grep gq-server |awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
-        ps -ef |grep -v grep | grep ck-server |awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
-        
-        # uninstall acme.sh
-        # ~/.acme.sh/acme.sh --uninstall > /dev/null 2>&1 && rm -rf ~/.acme.sh
-        
-        # uninstall caddy
-        wget -qO- https://git.io/fjuAR | bash -s uninstall > /dev/null 2>&1
-        
-        # uninstall ss-libev
-        rm -fr $(dirname ${SHADOWSOCKS_LIBEV_CONFIG})
-        rm -f /usr/local/bin/ss-local
-        rm -f /usr/local/bin/ss-tunnel
-        rm -f /usr/local/bin/ss-server
-        rm -f /usr/local/bin/ss-manager
-        rm -f /usr/local/bin/ss-redir
-        rm -f /usr/local/bin/ss-nat
-        rm -f /usr/local/lib/libshadowsocks-libev.a
-        rm -f /usr/local/lib/libshadowsocks-libev.la
-        rm -f /usr/local/include/shadowsocks.h
-        rm -f /usr/local/lib/pkgconfig/shadowsocks-libev.pc
-        rm -f /usr/local/share/man/man1/ss-local.1
-        rm -f /usr/local/share/man/man1/ss-tunnel.1
-        rm -f /usr/local/share/man/man1/ss-server.1
-        rm -f /usr/local/share/man/man1/ss-manager.1
-        rm -f /usr/local/share/man/man1/ss-redir.1
-        rm -f /usr/local/share/man/man1/ss-nat.1
-        rm -f /usr/local/share/man/man8/shadowsocks-libev.8
-        rm -fr /usr/local/share/doc/shadowsocks-libev
-        rm -f ${SHADOWSOCKS_LIBEV_INIT}
-        
-        # uninstall v2ray-plugin
-        rm -f /usr/local/bin/v2ray-plugin
-        
-        # uninstall kcptun
-        rm -fr $(dirname ${KCPTUN_INSTALL_DIR}) > /dev/null 2>&1
-        rm -fr $(dirname ${KCPTUN_CONFIG}) > /dev/null 2>&1
-        rm -fr ${KCPTUN_LOG_DIR} > /dev/null 2>&1
-        rm -f ${KCPTUN_INIT} > /dev/null 2>&1
-        
-        # uninstall simple-obfs
-        rm -f /usr/local/bin/obfs-local
-        rm -f /usr/local/bin/obfs-server
-        
-        # uninstall goquiet
-        rm -f /usr/local/bin/gq-server
-        
-        # uninstall cloak
-        rm -f /usr/local/bin/ck-server
-        rm -f /usr/local/bin/ck-client
-        rm -f ${CLOAK_INIT}
-        rm -fr $(dirname ${CK_CLIENT_CONFIG}) > /dev/null 2>&1
-        echo -e "${Info} Shadowsocks-libev 卸载成功..."
+    status_init
+    if [ -e "${ssPath}" ] && [ -e "${pluginPath}" ] && [ -e "${webPath}" ]; then
+        local pkgName="${ssName} ${pluginName} ${webName}"
+    elif [ -e "${ssPath}" ] && [ -e "${pluginPath}" ]; then
+        local pkgName="${ssName} ${pluginName}"
+    elif [ -e "${ssPath}" ]; then
+        local pkgName="${ssName}"
     else
-        echo
-        echo -e "${Info} Shadowsocks-libev 卸载取消..."
-        echo
+        local pkgName="Shadowsocks"
     fi
+    _read "你确定要卸载${pkgName}吗?(默认: n) [y/n]"
+    local yn="${inputInfo}"
+    [ -z "${yn}" ] && yn="N"
+    case "${yn:0:1}" in
+        y|Y)
+            improt_package "utils" "uninstall.sh"
+            uninstall_services
+            _echo -i "${pkgName} 卸载成功."
+            ;;
+        *)
+            _echo -i "${pkgName} 卸载取消."
+            exit 1
+            ;;
+    esac
 }
 
 do_install(){
-    # check supported
+    local mark
+
     if ! install_check; then
         echo -e "[${Red}Error${suffix}] Your OS is not supported to run it!"
         echo "Please change to CentOS 6+/Debian 7+/Ubuntu 12+ and try again."
         exit 1
     fi
-    
-    echo -e " Shadowsocks-libev一键管理脚本 ${Red}[v${SHELL_VERSION} ${methods}]${suffix}
-
-    ${Green}1.${suffix} BBR
-    ${Green}2.${suffix} Install
-    ${Green}3.${suffix} Uninstall
-     "
-    do_status
-    echo && read -e -p "请输入数字 [1-3]：" menu_num
+    if [ -e "${SHADOWSOCKS_LIBEV_BIN_PATH}" ]; then
+        mark="Shadowsocks-libev"
+    elif [ -e "${SHADOWSOCKS_RUST_BIN_PATH}" ]; then
+        mark="Shadowsocks-rust"
+    elif [ -e "${GO_SHADOWSOCKS2_BIN_PATH}" ]; then
+        mark="Go-shadowsocks2"
+    else
+        mark="Shadowsocks"
+    fi
+    echo -e " ${mark}一键脚本 ${Red}[v${SHELL_VERSION} ${methods}]${suffix}\n"
+    echo -e "    ${Green}1.${suffix} BBR"
+    echo -e "    ${Green}2.${suffix} Install"
+    echo -e "    ${Green}3.${suffix} Uninstall\n"
+    status_menu
+    _read -u "请输入数字 (默认: 2)："
+    menu_num="${inputInfo}"
+    [ -z "${menu_num}" ] && menu_num=2
     case "${menu_num}" in
         1)   
-            choose_script_bbr
+            source <(curl -sL "${TEDDYSUN_BBR_SCRIPT_URL}")
             ;;
         2)
             install_step_all
@@ -1253,69 +1530,50 @@ do_install(){
             do_uninstall
             ;;
         *)
-            echo -e "${Error} 请输入正确的数字 [1-3]"
+            _echo -e "请输入正确的数字 [1-3]"
             ;;
     esac
 }
 
 
 
-# check script version and update
-check_script_version
-
 # install and tools
+check_arch
 action=${1:-"install"}
 
 case ${action} in
-    install|uninstall|update|start|stop|restart|status)
+    install|uninstall|update|start|stop|restart)
         do_${action}
         ;;
+    status)
+        do_${action}
+        ;;
+    script)
+        check_script_update
+        ;;
     uid)
-        if [ "$(command -v ck-server)" ]; then
-            if [[ ${methods} == "Online" ]]; then
-                source <(curl -sL ${BASE_URL}/utils/ck_user_manager.sh)
-            else
-                source ${BASE_URL}/utils/ck_user_manager.sh
-            fi
-           
-            ck2_users_manager
-            sleep 0.5
-            
-            is_the_api_open "stop"
-        else
-            echo -e " ${Error} 仅支持 ss + cloak 组合下使用，请确认是否是以该组合形式运行..."
-        fi
+        do_${action} 
         ;;
     link)
-        if [ "$(command -v ck-server)" ]; then
-            if [[ ${methods} == "Online" ]]; then
-                source <(curl -sL ${BASE_URL}/utils/ck_sslink.sh)
-            else
-                source ${BASE_URL}/utils/ck_sslink.sh
-            fi
-            
-            get_link_of_ck2 "${2}"
-        else
-            echo -e " ${Error} 仅支持 ss + cloak 组合下使用，请确认是否是以该组合形式运行..."
-        fi
+        do_${action} "${2}"
         ;;
     scan)
-        if [[ ${methods} == "Online" ]]; then
-            source <(curl -sL ${BASE_URL}/utils/qr_code.sh)
-        else
-            source ${BASE_URL}/utils/qr_code.sh
-        fi
-        
-        gen_qr_code "${2}"
+        do_${action} "${2}"
         ;;
     show)
-        if [[ ${methods} == "Online" ]]; then
-            source <(curl -sL ${BASE_URL}/utils/view_config.sh)
-        else
-            source ${BASE_URL}/utils/view_config.sh
-        fi
-        
-        show_config
+        do_${action} "cleanScreen"
+        ;;
+    log)
+        do_${action}
+        ;;
+    cert)
+        do_${action} "${2}"
+        ;;
+    catcfg)
+        do_${action} "${2}"
+        ;;
+    renew)
+        certificate_renew_by_acme
         ;;
     help)
         usage 0
@@ -1323,5 +1581,4 @@ case ${action} in
     *)
         usage 1
         ;;
-        
 esac

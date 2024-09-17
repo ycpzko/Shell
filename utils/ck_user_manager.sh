@@ -5,7 +5,7 @@ is_the_api_open(){
     if [ "${mark}" == "start" ]; then
         if [ -z ${PID} ]; then
             # open the Api
-            /usr/local/bin/ck-client -s 127.0.0.1 -l 8080 -a $(cat ${CK_SERVER_CONFIG} | jq -r .AdminUID) -c ${CK_CLIENT_CONFIG} > /dev/null 2>&1 &
+            ${CLOAK_CLIENT_BIN_PATH} -s 127.0.0.1 -l 8080 -a $(cat ${CK_SERVER_CONFIG} | jq -r .AdminUID) -c ${CK_CLIENT_CONFIG} > /dev/null 2>&1 &
             sleep 0.5
         fi
     elif [ "${mark}" == "stop" ]; then
@@ -25,7 +25,7 @@ add_unrestricted_users(){
     do_restart > /dev/null 2>&1
     
     echo
-    echo -e "UID: ${Green}${CK_UID}${suffix} 添加成功..."
+    echo -e "UID: ${Green}${CK_UID}${suffix} 添加成功."
     echo
 }
 
@@ -43,12 +43,12 @@ UserInfo=$(cat <<EOF
 EOF
 )
 
-    curl -X POST -d UserInfo="${UserInfo}" http://127.0.0.1:8080/admin/users/$(echo "${CK_UID}" | tr '+' '-' | tr '/' '_') -sS
+    curl -H "Content-type: application/json" -X POST -d "${UserInfo}" http://127.0.0.1:8080/admin/users/$(echo "${CK_UID}" | tr '+' '-' | tr '/' '_') -sS
     
     sleep 0.5
     
     echo
-    echo -e "UID: ${Green}${CK_UID}${suffix} 添加成功..."
+    echo -e "UID: ${Green}${CK_UID}${suffix} 添加成功."
     echo
 }
 
@@ -115,7 +115,7 @@ del_unrestricted_users(){
     do_restart > /dev/null 2>&1
     
     echo
-    echo -e "UID: ${Green}${DEL_UNRESTRICTED_UID}${suffix} 删除成功..."
+    echo -e "UID: ${Green}${DEL_UNRESTRICTED_UID}${suffix} 删除成功."
     echo
 }
 
@@ -125,23 +125,235 @@ del_restricted_users(){
     sleep 0.5
     
     echo
-    echo -e "UID: ${Green}${DEL_RESTRICTED_UID}${suffix} 删除成功..."
+    echo -e "UID: ${Green}${DEL_RESTRICTED_UID}${suffix} 删除成功."
     echo
 }
 
-ck2_users_manager(){
-    if [[ ! -e '/usr/local/bin/ck-client' ]]; then
-        get_ver
-        # Download cloak client
-        cloak_ver="2.1.1"
-        local cloak_file="ck-client-linux-amd64-${cloak_ver}"
-        local cloak_url="https://github.com/cbeuw/Cloak/releases/download/v${cloak_ver}/ck-client-linux-amd64-${cloak_ver}"
-        download "${cloak_file}" "${cloak_url}"
+add_restricted_users_logic_code(){
+    while true
+    do
+        read -e -p "设置该UID最大用户连接数(默认: 2):" CK_SessionsCap
+        [[ -z "${CK_SessionsCap}" ]] && CK_SessionsCap=2
+        echo
+        echo -e "${Red}  SessionsCap = ${CK_SessionsCap}${suffix}"
+        echo
+        read -e -p "设置该UID最大上行速率(默认: 5M/s 单位：M/s):" CK_UpRate
+        [[ -z "${CK_UpRate}" ]] && CK_UpRate=5
+        echo
+        echo -e "${Red}  UpRate = ${CK_UpRate}${suffix}M/s"
+        echo
+        read -e -p "设置该UID最大下行速率(默认: 5M/s 单位：M/s):" CK_DownRate
+        [[ -z "${CK_DownRate}" ]] && CK_DownRate=5
+        echo
+        echo -e "${Red}  DownRate = ${CK_DownRate}${suffix}M/s"
+        echo
+        read -e -p "设置该UID最大上行流量(默认: 10G 单位：G):" CK_UpCredit
+        [[ -z "${CK_UpCredit}" ]] && CK_UpCredit=10
+        echo
+        echo -e "${Red}  UpCredit = ${CK_UpCredit}${suffix}G"
+        echo
+        read -e -p "设置该UID最大下行流量(默认: 10G 单位：G):" CK_DownCredit
+        [[ -z "${CK_DownCredit}" ]] && CK_DownCredit=10
+        echo
+        echo -e "${Red}  DownCredit = ${CK_DownCredit}${suffix}G"
+        echo
+        read -e -p "设置该UID凭证的有效期(默认: 30day 单位：Day):" Days
+        [[ -z "${Days}" ]] && Days=30
+        echo
+        echo -e "${Red}  ExpiryTime = ${Days}${suffix} day"
+        echo
         
-        # install ck-client
-        cd ${CUR_DIR}
-        chmod +x ${cloak_file}
-        mv ${cloak_file} /usr/local/bin/ck-client
+        # generation CK_UID
+        gen_credentials
+        
+        # Parameters required for POST request
+        CK_UID=${ckauid}
+        CK_SessionsCap=${CK_SessionsCap}
+        CK_UpRate=$((${CK_UpRate} * 1048576))
+        CK_DownRate=$((${CK_DownRate} * 1048576))
+        CK_UpCredit=$((${CK_UpCredit} * 1073741824))
+        CK_DownCredit=$((${CK_DownCredit} * 1073741824))
+        CK_ExpiryTime=$((${Days} * 86400 + ($(date +%s))))
+        
+        # Initiate a POST request to add a new restricted user
+        add_restricted_users
+        
+        
+        # Determine whether to continue, do not continue to interrupt the loop
+        echo
+        read -e -p "是否继续(默认: 是)[y/n]：" yn
+        echo
+        [ -z "${yn}" ] && yn="Y"
+        case "${yn:0:1}" in
+            y|Y)
+                :
+                ;;
+            n|N)
+                break
+                ;;
+            *)
+                _echo -e "输入有误，请重新输入!"
+                continue
+                ;;
+        esac
+    done    
+}
+
+add_unrestricted_users_logic_code(){
+    while true
+    do
+        # generation CK_UID
+        gen_credentials
+        CK_UID=${ckauid}
+
+        add_unrestricted_users
+        
+        # Determine whether to continue, do not continue to interrupt the loop
+        echo
+        read -e -p "是否继续(默认: 是)[y/n]：" yn
+        echo
+        [ -z "${yn}" ] && yn="Y"
+        case "${yn:0:1}" in
+            y|Y)
+                :
+                ;;
+            n|N)
+                break
+                ;;
+            *)
+                _echo -e "输入有误，请重新输入!"
+                continue
+                ;;
+        esac
+    done
+}
+
+del_restricted_users_logic_code(){
+    while true
+    do
+        list_restricted_users
+        
+        if [ ${userslist} = "null" ]; then
+            echo
+            echo -e "${Point} 当前没有受限用户可以删除."
+            echo
+            break
+        fi
+        
+        read -e -p "请输入UID序号：" del_uid_num
+        [ -z ${del_uid_num} ] && del_uid_num=1
+        expr ${del_uid_num} + 1 &>/dev/null
+        if [ $? -eq 0 ] && [ ${del_uid_num} -ge 1 ] && [ ${del_uid_num} -le ${#UsersArray[*]} ] && [ ${del_uid_num:0:1} != 0 ]; then
+            # Get the UID pointed to by the selected sequence number
+            DEL_RESTRICTED_UID=$(echo ${userslist} | jq -r .[$((${del_uid_num} - 1))].UID)
+            
+            # Del the user by UID
+            del_restricted_users
+        else
+            _echo -e "请输入一个正确的数 [1-${#UsersArray[*]}]"
+            continue
+        fi
+        
+        # Determine whether to continue, do not continue to interrupt the loop
+        echo
+        read -e -p "是否继续(默认: 是)[y/n]：" yn
+        echo
+        [ -z "${yn}" ] && yn="Y"
+        case "${yn:0:1}" in
+            y|Y)
+                :
+                ;;
+            n|N)
+                break
+                ;;
+            *)
+                _echo -e "输入有误，请重新输入!"
+                continue
+                ;;
+        esac
+    done
+}
+
+del_unrestricted_users_logic_cade(){
+    while true
+    do
+        list_unrestricted_users
+        
+        if [[ ${#UIDS[*]} = 0 ]]; then
+            echo
+            echo -e "${Point} 当前没有不受限用户可以删除."
+            echo
+            break
+        fi
+        
+        read -e -p "请输入UID序号：" del_uid_num
+        [ -z ${del_uid_num} ] && del_uid_num=1
+        expr ${del_uid_num} + 1 &>/dev/null
+        if [ $? -eq 0 ] && [ ${del_uid_num} -ge 1 ] && [ ${del_uid_num} -le ${#UIDS[*]} ] && [ ${del_uid_num:0:1} != 0 ]; then
+            # Get the UID pointed to by the selected sequence number
+            DEL_UNRESTRICTED_UID=${UIDS[$((del_uid_num -1))]}
+            
+            # Del the user by UID
+            del_unrestricted_users
+        else
+            _echo -e "请输入一个正确的数 [1-${#UIDS[*]}]"
+            continue
+        fi
+        
+        # Determine whether to continue, do not continue to interrupt the loop
+        echo
+        read -e -p "是否继续(默认: 是)[y/n]：" yn
+        echo
+        [ -z "${yn}" ] && yn="Y"
+        case "${yn:0:1}" in
+            y|Y)
+                :
+                ;;
+            n|N)
+                break
+                ;;
+            *)
+                _echo -e "输入有误，请重新输入!"
+                continue
+                ;;
+        esac
+    done
+}
+
+download_ck_clinet(){
+    local CK_CLIENT_V=$1
+    
+    cd ${CUR_DIR}
+    # Download cloak client
+    local cloak_file="ck-client-linux-${ARCH}-v${CK_CLIENT_V}"
+    local cloak_url="https://github.com/cbeuw/Cloak/releases/download/v${CK_CLIENT_V}/ck-client-linux-${ARCH}-v${CK_CLIENT_V}"
+    TEMP_DIR_PATH=$(mktemp -d)
+    trap "rm -rf $TEMP_DIR_PATH; exit" 2
+    pushd ${TEMP_DIR_PATH} > /dev/null 2>&1
+    improt_package "utils" "downloads.sh"
+    download "${cloak_file}" "${cloak_url}"
+    
+    # install ck-client
+    chmod +x ${cloak_file}
+    mv ${cloak_file} ${CLOAK_CLIENT_BIN_PATH}
+    [ -f ${CLOAK_CLIENT_BIN_PATH} ] && ln -fs ${CLOAK_CLIENT_BIN_PATH} /usr/bin
+    popd > /dev/null 2>&1
+    install_cleanup
+}
+
+ck2_users_manager(){
+    if [[ ! -e ${CLOAK_CLIENT_BIN_PATH} ]]; then
+        # Download cloak client
+        cloak_ver=$(ck-server -v | grep ck-server | cut -d\  -f2 | sed 's/v//g')
+        download_ck_clinet ${cloak_ver}
+    fi
+    
+    ck_server_v=$(ck-server -v | grep ck-server | cut -d\  -f2 | sed 's/v//g')
+    ck_client_v=$(ck-client -v | grep ck-client | cut -d\  -f2 | sed 's/v//g')
+    if version_gt ${ck_server_v} ${ck_client_v}; then
+        # Download cloak client
+        cloak_ver=${ck_server_v}
+        download_ck_clinet ${cloak_ver}
     fi
     
     is_the_api_open "start"
@@ -166,88 +378,13 @@ ck2_users_manager(){
             echo
             case "${add_opts}" in
                 1)
-                    while true
-                    do
-                        read -e -p "设置该UID最大用户连接数(默认: 2):" CK_SessionsCap
-                        [[ -z "${CK_SessionsCap}" ]] && CK_SessionsCap=2
-                        echo
-                        echo -e "${Red}  SessionsCap = ${CK_SessionsCap}${suffix}"
-                        echo
-                        read -e -p "设置该UID最大上行速率(默认: 5M/s 单位：M/s):" CK_UpRate
-                        [[ -z "${CK_UpRate}" ]] && CK_UpRate=5
-                        echo
-                        echo -e "${Red}  UpRate = ${CK_UpRate}${suffix}M/s"
-                        echo
-                        read -e -p "设置该UID最大下行速率(默认: 5M/s 单位：M/s):" CK_DownRate
-                        [[ -z "${CK_DownRate}" ]] && CK_DownRate=5
-                        echo
-                        echo -e "${Red}  DownRate = ${CK_DownRate}${suffix}M/s"
-                        echo
-                        read -e -p "设置该UID最大上行流量(默认: 10G 单位：G):" CK_UpCredit
-                        [[ -z "${CK_UpCredit}" ]] && CK_UpCredit=10
-                        echo
-                        echo -e "${Red}  UpCredit = ${CK_UpCredit}${suffix}G"
-                        echo
-                        read -e -p "设置该UID最大下行流量(默认: 10G 单位：G):" CK_DownCredit
-                        [[ -z "${CK_DownCredit}" ]] && CK_DownCredit=10
-                        echo
-                        echo -e "${Red}  DownCredit = ${CK_DownCredit}${suffix}G"
-                        echo
-                        read -e -p "设置该UID凭证的有效期(默认: 30day 单位：Day):" Days
-                        [[ -z "${Days}" ]] && Days=30
-                        echo
-                        echo -e "${Red}  ExpiryTime = ${Days}${suffix} day"
-                        echo
-                        
-                        # generation CK_UID
-                        gen_credentials
-                        
-                        # Parameters required for POST request
-                        CK_UID=${ckauid}
-                        CK_SessionsCap=${CK_SessionsCap}
-                        CK_UpRate=$((${CK_UpRate} * 1048576))
-                        CK_DownRate=$((${CK_DownRate} * 1048576))
-                        CK_UpCredit=$((${CK_UpCredit} * 1073741824))
-                        CK_DownCredit=$((${CK_DownCredit} * 1073741824))
-                        CK_ExpiryTime=$((${Days} * 86400 + ($(date +%s))))
-                        
-                        # Initiate a POST request to add a new restricted user
-                        add_restricted_users
-                        
-                        
-                        # Determine whether to continue, do not continue to interrupt the loop
-                        echo
-                        read -e -p "是否继续(默认: 是)[y/n]：" yn
-                        echo
-                        [ -z "${yn}" ] && yn="Y"
-                        case "${yn:0:1}" in
-                            y|Y)
-                                :
-                                ;;
-                            n|N)
-                                break
-                                ;;
-                            *)
-                                echo
-                                echo -e "${Error} 输入有误，请重新输入!"
-                                echo
-                                
-                                continue
-                                ;;
-                        esac
-                    done
+                    add_restricted_users_logic_code
                     ;;
                 2)
-                    # generation CK_UID
-                    gen_credentials
-                    CK_UID=${ckauid}
-                    
-                    add_unrestricted_users
+                    add_unrestricted_users_logic_code
                     ;;
                 *)
-                    echo
-                    echo -e "${Error} 请输入正确的数字 [1-2]"
-                    echo
+                    _echo -e "请输入正确的数字 [1-2]"
                     ;;
             esac
             ;;
@@ -266,9 +403,7 @@ ck2_users_manager(){
                     list_unrestricted_users
                     ;;
                 *)
-                    echo
-                    echo -e "${Error} 请输入正确的数字 [1-2]"
-                    echo
+                    _echo -e "请输入正确的数字 [1-2]"
                     ;;
             esac
             ;;
@@ -281,118 +416,29 @@ ck2_users_manager(){
             echo
             case "${del_opts}" in
                 1)  
-                    while true
-                    do
-                        list_restricted_users
-                        
-                        if [ ${userslist} != "null" ]; then
-                            read -e -p "请输入UID序号：" del_uid_num
-                            [ -z ${del_uid_num} ] && del_uid_num=1
-                            expr ${del_uid_num} + 1 &>/dev/null
-                            if [ $? -eq 0 ] && [ ${del_uid_num} -ge 1 ] && [ ${del_uid_num} -le ${#UsersArray[*]} ] && [ ${del_uid_num:0:1} != 0 ]; then
-                                # Get the UID pointed to by the selected sequence number
-                                DEL_RESTRICTED_UID=$(echo ${userslist} | jq -r .[$((${del_uid_num} - 1))].UID)
-                                
-                                # Del the user by UID
-                                del_restricted_users
-                            else
-                                echo
-                                echo -e "${Error} 请输入一个正确的数 [1-${#UsersArray[*]}]"
-                                echo
-                                continue
-                            fi
-                            
-                            # Determine whether to continue, do not continue to interrupt the loop
-                            echo
-                            read -e -p "是否继续(默认: 是)[y/n]：" yn
-                            echo
-                            [ -z "${yn}" ] && yn="Y"
-                            case "${yn:0:1}" in
-                                y|Y)
-                                    :
-                                    ;;
-                                n|N)
-                                    break
-                                    ;;
-                                *)
-                                    echo
-                                    echo -e "${Error} 输入有误，请重新输入!"
-                                    echo
-                                    
-                                    continue
-                                    ;;
-                            esac
-                        else
-                            echo
-                            echo -e "${Point} 当前没有受限用户可以删除..."
-                            echo
-                            
-                            break
-                        fi
-                    done
+                    del_restricted_users_logic_code
                     ;;
                 2)  
-                    while true
-                    do
-                        list_unrestricted_users
-                        
-                        if [[ ${#UIDS[*]} != 0 ]]; then
-                            read -e -p "请输入UID序号：" del_uid_num
-                            [ -z ${del_uid_num} ] && del_uid_num=1
-                            expr ${del_uid_num} + 1 &>/dev/null
-                            if [ $? -eq 0 ] && [ ${del_uid_num} -ge 1 ] && [ ${del_uid_num} -le ${#UIDS[*]} ] && [ ${del_uid_num:0:1} != 0 ]; then
-                                # Get the UID pointed to by the selected sequence number
-                                DEL_UNRESTRICTED_UID=${UIDS[$((del_uid_num -1))]}
-                                
-                                # Del the user by UID
-                                del_unrestricted_users
-                            else
-                                echo
-                                echo -e "${Error} 请输入一个正确的数 [1-${#UIDS[*]}]"
-                                echo
-                                continue
-                            fi
-                            
-                            # Determine whether to continue, do not continue to interrupt the loop
-                            echo
-                            read -e -p "是否继续(默认: 是)[y/n]：" yn
-                            echo
-                            [ -z "${yn}" ] && yn="Y"
-                            case "${yn:0:1}" in
-                                y|Y)
-                                    :
-                                    ;;
-                                n|N)
-                                    break
-                                    ;;
-                                *)
-                                    echo
-                                    echo -e "${Error} 输入有误，请重新输入!"
-                                    echo
-                                    
-                                    continue
-                                    ;;
-                            esac
-                        else
-                            echo
-                            echo -e "${Point} 当前没有不受限用户可以删除..."
-                            echo
-                            
-                            break
-                        fi
-                    done
+                    del_unrestricted_users_logic_cade
                     ;;
                 *)
-                    echo
-                    echo -e "${Error} 请输入正确的数字 [1-2]"
-                    echo
+                    _echo -e "请输入正确的数字 [1-2]"
                     ;;
             esac
             ;;
         *)
-            echo
-            echo -e "${Error} 请输入正确的数字 [1-3]"
-            echo
+            _echo -e "请输入正确的数字 [1-3]"
             ;;
     esac
+}
+
+user_manager_by_uid(){
+    if [ ! "$(command -v ck-server)" ]; then
+        echo -e "\n${Error} 仅支持 ss + cloak 组合下使用，请确认是否是以该组合形式运行.\n"
+        exit 1
+    fi
+
+    ck2_users_manager
+    sleep 0.5
+    is_the_api_open "stop"
 }
